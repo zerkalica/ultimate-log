@@ -1,0 +1,31 @@
+{
+  "name": "ultimate-logger",
+  "version": "1.0.0",
+  "description": "Yet another logger with transports, cluster and logrotate support",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zerkalica/ultimate-logger"
+  },
+  "keywords": [
+    "logger",
+    "logrotate"
+  ],
+  "author": "Sergey Yuferev <nexor@ya.ru>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zerkalica/ultimate-logger/issues"
+  },
+  "homepage": "https://github.com/zerkalica/ultimate-logger",
+  "devDependencies": {
+    "chai": "^1.9.1",
+    "mocha": "^1.21.4"
+  },
+  "dependencies": {
+    "logstream": "^0.1.0",
+    "node-serialize": "0.0.4"
+  }
+}
