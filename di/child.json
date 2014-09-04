@@ -1,0 +1,30 @@
+{
+	"logger.transport.ipc": {
+		"require": "%ultimate-logger.libdir%/transports/ipc-transport",
+		"options": {
+			"rpcNamespace": "ultimate-logger"
+		}
+	},
+
+	"logger.session.default": {
+		"require": "%ultimate-logger.libdir%/logger-session"
+	},
+
+	"logger.child": {
+		"require": "%ultimate-logger.libdir%/logger",
+		"options": {
+			"loggerSession": "@logger.session.default",
+			"transports": [
+				{
+					"transport": "@logger.transport.ipc"
+				}
+			]
+		}
+	},
+	"logger.process-binder": {
+		"require": "%ultimate-logger.libdir%/process-binder",
+		"options": {
+			"reopenSignal": "SIGHUP"
+		}
+	}
+}
