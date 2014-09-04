@@ -20,9 +20,9 @@ function master() {
 
 	var processBinder   = microDi.get('logger.process-binder');
 	var workerListeners = microDi.getByTag('logger.worker-listener');
-	var logger          = microDi.get('logger.master');
+	var loggerFactory   = microDi.get('logger.master');
 
-	processBinder.attach(logger);
+	processBinder.attach(loggerFactory);
 
 	var id = process.pid + '-master';
 	var workersCount = 2;
@@ -32,9 +32,9 @@ function master() {
 		workerListner.attach(cluster);
 	});
 
-	var session = logger.sessionStart({namespace: 'master'});
+	var logger = loggerFactory.sessionStart({namespace: 'master'});
 
-	session.log('master start');
+	logger.log('master start');
 
 	for (var i = 0; i < workersCount; i++) {
 		cluster.fork();
@@ -46,22 +46,23 @@ function child () {
 	microDi.addConfig(childConfig);
 
 	var processBinder = microDi.get('logger.process-binder');
-	var logger        = microDi.get('logger.child');
+	var loggerFactory        = microDi.get('logger.child');
 
-	processBinder.attach(logger);
+	processBinder.attach(loggerFactory);
 
-	var session = logger.sessionStart({namespace: 'request', data: req});
-	session.log('test 1 from child');
-	session.log('test 2 from child', 'error');
-	session.stop();
+	var logger = loggerFactory.sessionStart({namespace: 'request', data: req});
+	logger.log('test 1 from child');
+	logger.log('test 2 from child', 'error');
+	logger.stop();
 
+	logger = loggerFactory.sessionStart({namespace: 'request'});
+	logger.log('test 3 from child');
 
-	session = logger.sessionStart({namespace: 'request', data: req});
-	session.log('test 3 from child');
+	logger.session.data = req;
 
 	setTimeout(function () {
-		session.log('test 4 from child', 'error');
-		session.stop();
+		logger.log('test 4 from child', 'error');
+		logger.stop();
 	}, 100);
 
 }
