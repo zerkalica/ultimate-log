@@ -1,7 +1,7 @@
-var MicroDi   = require('../micro-di');
+var MicroDi   = require('./micro-di');
 var cluster   = require('cluster');
 var path      = require('path');
-var loggerRegister  = require('../di');
+var loggerRegister  = require('../micro-di');
 
 var microDi = new MicroDi();
 
