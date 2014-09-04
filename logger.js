@@ -121,8 +121,10 @@ proto.processStop = function () {
 };
 
 proto.sessionStart = function (id, sessionObject) {
-	var hrTime = process.hrtime();
-	id = id || (process.pid + '-' + hrTime[0] * 1000000 + hrTime[1] / 1000);
+	if (!id) {
+		var hrTime = process.hrtime();
+		id = process.pid + '-' + (hrTime[0] * 1000000 + hrTime[1] / 1000);
+	}
 	var loggerSession = new LoggerSession({
 		id: id,
 		logger: this,
