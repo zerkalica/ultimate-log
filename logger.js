@@ -35,6 +35,13 @@ proto = LoggerSessionIdNotSpecifiedException.prototype;
 proto = new Error();
 proto.constructor = LoggerSessionIdNotSpecifiedException;
 
+var SessionLoggerNoUnqueIdException = function (id) {
+	this.name = 'SessionLoggerNoUnqueIdException';
+	this.message = 'Id ' + id + ' is not unique in logger.logObject';
+};
+proto = SessionLoggerNoUnqueIdException.prototype;
+proto = new Error();
+proto.constructor = SessionLoggerNoUnqueIdException;
 
 var LoggerSession = function (options) {
 	this.name    = 'LoggerSession';
@@ -125,6 +132,11 @@ proto.sessionStart = function (id, sessionObject) {
 		var hrTime = process.hrtime();
 		id = process.pid + '-' + (hrTime[0] * 1000000 + hrTime[1] / 1000);
 	}
+
+	if (this._sessionIds[id]) {
+		throw new SessionLoggerNoUnqueIdException(id);
+	}
+
 	var loggerSession = new LoggerSession({
 		id: id,
 		logger: this,
