@@ -138,7 +138,7 @@ function child () {
 
 	//processBinder.attach(logger);
 
-	var session = logger.sessionStart('req1' + process.pid);
+	var session = logger.sessionStart();
 	session.log('test 1 from child');
 	session.log('test 2 from child', 'error');
 	session.stop();

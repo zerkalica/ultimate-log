@@ -1,31 +1,11 @@
 'use strict';
 var Logger,
 	proto,
-	nodeSerialize = require('node-serialize').serialize;
+	LoggerSession = require('./logger-session');
 
 function isObject(val) {
 	return (typeof val === 'object');
 }
-
-function isString(val) {
-	return (Object.prototype.toString.call(val) === '[object String]');
-}
-
-function isArray(val) {
-	return Array.isArray(val);
-}
-
-var serialize = function(message) {
-	if (isArray(message)) {
-		message = message.map(function (item) {
-			return isString(item) ? item : nodeSerialize(item);
-		}).join("\n");
-	} else if (isObject(message)) {
-		message = nodeSerialize(message);
-	}
-
-	return message;
-};
 
 var LoggerSessionIdNotSpecifiedException = function () {
 	this.name = 'LoggerSessionIdNotSpecifiedException';
@@ -35,34 +15,14 @@ proto = LoggerSessionIdNotSpecifiedException.prototype;
 proto = new Error();
 proto.constructor = LoggerSessionIdNotSpecifiedException;
 
-var SessionLoggerNoUnqueIdException = function (id) {
-	this.name = 'SessionLoggerNoUnqueIdException';
+var LoggerSessionNoUnqueIdException = function (id) {
+	this.name = 'LoggerSessionNoUnqueIdException';
 	this.message = 'Id ' + id + ' is not unique in logger.logObject';
 };
-proto = SessionLoggerNoUnqueIdException.prototype;
+proto = LoggerSessionNoUnqueIdException.prototype;
 proto = new Error();
-proto.constructor = SessionLoggerNoUnqueIdException;
+proto.constructor = LoggerSessionNoUnqueIdException;
 
-var LoggerSession = function (options) {
-	this.name    = 'LoggerSession';
-	this.id      = options.id;
-	this.session = options.session;
-	this.logger  = options.logger;
-};
-proto = LoggerSession.prototype;
-
-proto.log = function (message, type) {
-	this.logger.logObject({
-		message: serialize(message),
-		type: type || 'info',
-		id: this.id,
-		session: this.session
-	});
-};
-
-proto.stop = function () {
-	this.logger.sessionStop(this.id);
-};
 
 Logger = function (options) {
 	this.name    = 'Logger';
@@ -71,21 +31,21 @@ Logger = function (options) {
 	this.transports = options.transports || [];
 	this._sessionIds = {};
 };
-
 proto = Logger.prototype;
 
 proto.logObject = function (logObject) {
 	if (!logObject || !logObject.id) {
 		throw new LoggerSessionIdNotSpecifiedException();
 	}
-	var filteredTransports = this.transports.filter(this._transportFilter.bind(this, logObject));
-	filteredTransports.forEach(function (item) {
-		if (item.aggregator) {
-			item.aggregator.collect(logObject);
-		} else {
-			item.transport.log(logObject);
-		}
-	});
+	this.transports
+		.filter(this._transportFilter.bind(this, logObject))
+		.forEach(function (item) {
+			if (item.aggregator) {
+				item.aggregator.collect(logObject);
+			} else {
+				item.transport.log(logObject);
+			}
+		});
 };
 
 proto._transportFilter = function (logObject, item) {
@@ -105,10 +65,10 @@ proto._transportFilter = function (logObject, item) {
 	return isValid;
 };
 
-proto._callMethod = function(name) {
+proto._callMethod = function(name, params) {
 	this.transports.forEach(function (item) {
 		var transport = item.transport;
-		transport[name] && transport[name]();
+		transport[name] && transport[name](params);
 	});
 };
 
@@ -127,22 +87,41 @@ proto.processStop = function () {
 	this._callMethod('processStop');
 };
 
-proto.sessionStart = function (id, sessionObject) {
+/**
+ * Start logger session
+ *
+ * @param  {Object} id      Session id
+ * @param  {String} id.id   Session id
+ * @param  {Object} id.data Session data
+ * 
+ * @param  {String} id   Session id
+ * @param  {Object} data Any session data
+ *
+ * @return {LoggerSession} Logger session object
+ */
+proto.sessionStart = function (id, data) {
+	if (isObject(id)) {
+		if (!data) {
+			data = id.data;
+		}
+		id = id.id;
+	}
+
 	if (!id) {
 		var hrTime = process.hrtime();
 		id = process.pid + '-' + (hrTime[0] * 1000000 + hrTime[1] / 1000);
 	}
 
 	if (this._sessionIds[id]) {
-		throw new SessionLoggerNoUnqueIdException(id);
+		throw new LoggerSessionNoUnqueIdException(id);
 	}
 
 	var loggerSession = new LoggerSession({
 		id: id,
 		logger: this,
-		session: serialize(sessionObject)
+		session: data
 	});
-	this._callMethod('sessionStart');
+	this._callMethod('sessionStart', {id: id, data: data});
 
 	this._sessionIds[id] = {
 		session: loggerSession,

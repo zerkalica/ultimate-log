@@ -21,11 +21,4 @@ proto.flush = function (id, cb) {
 	}
 };
 
-proto.flushAll = function (cb) {
-	for (var id in this.logObjects) {
-		this.logObjects[id].forEach(cb);
-	}
-	this.logObjects = {};
-};
-
 module.exports = RequestIdAggregator;

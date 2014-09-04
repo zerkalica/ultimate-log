@@ -15,6 +15,10 @@ proto.log = function (logObject) {
 	this._call('logObject', logObject);
 };
 
+proto.sessionStart = function (sessionObject) {
+	this._call('sessionStart', sessionObject);
+};
+
 proto.sessionStop = function (id) {
 	this._call('sessionStop', id);
 };
