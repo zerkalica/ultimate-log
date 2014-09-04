@@ -43,9 +43,14 @@ var config = {
 		'options': {}
 	},
 
+	'logger.session.default': {
+		'require': '%root%/logger-session'
+	},
+
 	'logger.child': {
 		'require': '%root%/logger',
 		'options': {
+			'loggerSession': '@logger.session.default',
 			'transports': [
 				{
 					'transport': '@logger.transport.ipc'
@@ -57,6 +62,7 @@ var config = {
 	'logger.master': {
 		'require': '%root%/logger',
 		'options': {
+			'loggerSession': '@logger.session.default',
 			'sessionLifeTime': 10000, // 10 seconds max
 			'transports': [
 				{
@@ -134,16 +140,18 @@ function master() {
 
 function child () {
 	var processBinder = microDi.get('logger.process-binder');
-	var logger = microDi.get('logger.child');
+	var logger        = microDi.get('logger.child');
 
-	//processBinder.attach(logger);
+	processBinder.attach(logger);
 
 	var session = logger.sessionStart();
 	session.log('test 1 from child');
 	session.log('test 2 from child', 'error');
 	session.stop();
 
-	session = logger.sessionStart('req2' + process.pid);
+
+	var req = {test: 'test-req'};
+	session = logger.sessionStart('req2' + process.pid, req);
 	session.log('test 3 from child');
 
 	setTimeout(function () {

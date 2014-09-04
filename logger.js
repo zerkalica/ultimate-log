@@ -27,6 +27,7 @@ proto.constructor = LoggerSessionNoUnqueIdException;
 Logger = function (options) {
 	this.name    = 'Logger';
 	options = options || {};
+	this.LoggerSession = options.loggerSession || LoggerSession;
 	this.sessionLifeTime = options.sessionLifeTime || 10000;
 	this.transports = options.transports || [];
 	this._sessionIds = {};
@@ -116,7 +117,7 @@ proto.sessionStart = function (id, data) {
 		throw new LoggerSessionNoUnqueIdException(id);
 	}
 
-	var loggerSession = new LoggerSession({
+	var loggerSession = new this.LoggerSession({
 		id: id,
 		logger: this,
 		session: data

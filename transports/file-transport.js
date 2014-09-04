@@ -19,8 +19,8 @@ proto.processStop = function () {
 	this.stream = null;
 };
 
-proto.log = function (options) {
-	this.stream.write('[' + options.type + '][' + options.id + ']: ' + options.message);
+proto.log = function (logObject) {
+	this.stream.write('[' + logObject.type + '][' + logObject.id + ']: ' + logObject.message);
 };
 
 proto.reopen = function () {
