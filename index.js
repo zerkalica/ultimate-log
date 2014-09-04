@@ -11,7 +11,7 @@ microDi.addVariables({
 });
 
 microDi.addVariables({
-	'ultimate-logger.libdir': path.dirname(require.resolve('./logger')),
+	'ultimate-logger.libdir': path.dirname(require.resolve('./lib/logger')),
 	'log.dir': '%project.rootdir%/tests/logs'
 });
 
