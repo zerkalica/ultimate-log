@@ -1,12 +1,4 @@
-var path         = require('path');
-var masterConfig = require('./di/master');
-var childConfig  = require('./di/child');
+var path            = require('path');
+var microDiRegister = require('./di');
 
-module.exports = function (microDi) {
-	microDi.addVariables({
-		'ultimate-logger.libdir': path.dirname(require.resolve('./lib/logger')),
-		'log.dir': '%project.rootdir%/tests/logs'
-	});
-	microDi.addConfig(masterConfig);
-	microDi.addConfig(childConfig);
-};
+module.exports = microDiRegister;
