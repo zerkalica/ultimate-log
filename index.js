@@ -1,124 +1,23 @@
 var MicroDi = require('./micro-di');
 var cluster = require('cluster');
+var path    = require('path');
+var masterConfig  = require('./di/master');
+var childConfig  = require('./di/child');
 
-var config = {
-	'logger.transport.console': {
-		'require': '%root%/transports/console-transport',
-		'options': {
-			'types': ['info', 'warn', 'error']
-		}
-	},
-	'logger.transport.ipc': {
-		'require': '%root%/transports/ipc-transport',
-		'options': {
-			'rpcNamespace': 'ultimate-logger'
-		}
-	},
-	'logger.transport.file.all': {
-		'require': '%root%/transports/file-transport',
-		'options': {
-			'fileName': '%log.dir%/all.log'
-		}
-	},
-	'logger.transport.file.error': {
-		'require': '%root%/transports/file-transport',
-		'options': {
-			'fileName': '%log.dir%/error.log'
-		}
-	},
-	'logger.filter.type.all': {
-		'require': '%root%/filters/type-filter',
-		'options': {
-			'types': ['info', 'warn', 'error']
-		}
-	},
-	'logger.filter.type.error': {
-		'require': '%root%/filters/type-filter',
-		'options': {
-			'types': ['error']
-		}
-	},
-	'logger.aggregator.request_id': {
-		'require': '%root%/aggregators/request-id-aggregator',
-		'options': {}
-	},
+var microDi = new MicroDi();
 
-	'logger.session.default': {
-		'require': '%root%/logger-session'
-	},
+microDi.addVariables({
+	'project.rootdir': '.'
+});
 
-	'logger.child': {
-		'require': '%root%/logger',
-		'options': {
-			'loggerSession': '@logger.session.default',
-			'transports': [
-				{
-					'transport': '@logger.transport.ipc'
-					//'filters': ['@logger.filter.type.error']
-				}
-			]
-		}
-	},
-	'logger.master': {
-		'require': '%root%/logger',
-		'options': {
-			'loggerSession': '@logger.session.default',
-			'sessionLifeTime': 10000, // 10 seconds max
-			'transports': [
-				{
-					'transport': '@logger.transport.console',
-					'filters': ['@logger.filter.type.all'],
-					'aggregator': '@logger.aggregator.request_id'
-				}/*,
-				{
-					'transport': '@logger.transport.file.all',
-					'filters': ['@logger.filter.type.all'],
-					'aggregator': '@logger.aggregator.request_id'
-				},
-				{
-					'transport': '@logger.transport.file.error',
-					'filters': ['@logger.filter.type.error'],
-					'aggregator': '@logger.aggregator.request_id'
-				}*/
-			]
-		}
-	},
-
-	'logger.master.ipc-worker-listener': {
-		'require': '%root%/worker-listeners/ipc-listener',
-		'tag': 'logger.worker-listener',
-		'options': {
-			'rpcNamespace': 'ultimate-logger',
-			'logger': '@logger.master'
-		}
-	},
-
-	'logger.master.std-worker-listener': {
-		'require': '%root%/worker-listeners/std-listener',
-		//'tag': 'logger.worker-listener',
-		'options': {
-			'rpcNamespace': 'ultimate-logger',
-			'logger': '@logger.master'
-		}
-	},
-
-	'logger.process-binder': {
-		'require': '%root%/process-binder',
-		'options': {
-			'reopenSignal': 'SIGHUP'
-		}
-	}
-};
-
-var variables = {
-	'root': '.',
-	'log.dir': 'tests/logs'
-};
-
-var microDi = new MicroDi(config);
-microDi.setVariables(variables);
+microDi.addVariables({
+	'ultimate-logger.libdir': path.dirname(require.resolve('./logger')),
+	'log.dir': '%project.rootdir%/tests/logs'
+});
 
 function master() {
+	microDi.addConfig(masterConfig);
+
 	var processBinder   = microDi.get('logger.process-binder');
 	var workerListeners = microDi.getByTag('logger.worker-listener');
 	var logger          = microDi.get('logger.master');
@@ -133,31 +32,38 @@ function master() {
 		workerListner.attach(cluster);
 	});
 
+	var session = logger.sessionStart({namespace: 'master'});
+
+	session.log('master start');
+
 	for (var i = 0; i < workersCount; i++) {
 		cluster.fork();
 	}
 };
 
 function child () {
+	var req = {test: 'test-req'};
+	microDi.addConfig(childConfig);
+
 	var processBinder = microDi.get('logger.process-binder');
 	var logger        = microDi.get('logger.child');
 
 	processBinder.attach(logger);
 
-	var session = logger.sessionStart();
+	var session = logger.sessionStart({namespace: 'request', data: req});
 	session.log('test 1 from child');
 	session.log('test 2 from child', 'error');
 	session.stop();
 
 
-	var req = {test: 'test-req'};
-	session = logger.sessionStart('req2' + process.pid, req);
+	session = logger.sessionStart({namespace: 'request', data: req});
 	session.log('test 3 from child');
 
 	setTimeout(function () {
 		session.log('test 4 from child', 'error');
 		session.stop();
 	}, 100);
+
 }
 
 if (cluster.isMaster) {

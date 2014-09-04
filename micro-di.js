@@ -1,5 +1,6 @@
 'use strict';
-var proto;
+var MicroDi,
+	proto;
 
 function isObject(val) {
 	return (typeof val === 'object');
@@ -26,17 +27,6 @@ function mapString(string, map) {
 	return result;
 }
 
-function deepFreeze (o) {
-	var prop, propKey;
-	Object.freeze(o); // First freeze the object.
-	for (propKey in o) {
-		prop = o[propKey];
-		if (o.hasOwnProperty(propKey) && prop instanceof Object && !Object.isFrozen(prop)) {
-			deepFreeze(prop);
-		}
-	}
-}
-
 var ServiceRecursiveCallException = function (serviceName) {
 	this.name = 'ServiceRecursiveCallException';
 	this.message = 'Recursive dependencies with ' + serviceName + ' service';
@@ -53,16 +43,56 @@ proto = ServiceNotConfiguredException.prototype;
 proto = new Error();
 proto.constructor = ServiceNotConfiguredException;
 
-var MicroDi = function (config) {
+var VariableDefinedException = function (key) {
+	this.name = 'VariableDefinedException';
+	this.message = 'Variable ' + key + ' already defined in scope';
+};
+proto = VariableDefinedException.prototype;
+proto = new Error();
+proto.constructor = VariableDefinedException;
+
+var MicroDiAlreadyInitialized = function (key) {
+	this.name = 'MicroDiAlreadyInitialized';
+	this.message = 'Container already initialized,  addConfig or addVariables before fist get';
+};
+proto = MicroDiAlreadyInitialized.prototype;
+proto = new Error();
+proto.constructor = MicroDiAlreadyInitialized;
+
+MicroDi = function (config) {
 	this.name = 'MicroDi';
 	this.services = {};
 	this.buildLocks = {};
 	this.mapVariables = {};
-	this.config = config;
-	deepFreeze(this.config);
+	this.config = config || {};
+	this._mapVariablesExplained = false;
 };
 
 proto = MicroDi.prototype;
+
+proto.addConfig = function (config) {
+	if (this._mapVariablesExplained) {
+		throw new MicroDiAlreadyInitialized();
+	}
+
+	for (var ns in config) {
+		//@TODO: clone
+		this.config[ns] = config[ns];
+	}
+};
+
+proto.addVariables = function (variables) {
+	var key;
+	if (this._mapVariablesExplained) {
+		throw new MicroDiAlreadyInitialized();
+	}
+
+	for (var ns in variables) {
+		key = '%' + ns + '%';
+		this.mapVariables[key] = variables[ns];
+		
+	}
+};
 
 proto.convertPropertyStringValue = function(configValue) {
 	var serviceName,
@@ -160,8 +190,20 @@ proto.buildService = function(serviceName, params) {
 	return service;
 };
 
+proto._explainMapVariables = function () {
+	for (var varName in this.mapVariables) {
+		this.mapVariables[varName] = this.explainString(this.mapVariables[varName]);
+	}
+};
+
 proto.get = function(serviceName) {
 	var service, params;
+
+	if (!this._mapVariablesExplained) {
+		this._explainMapVariables();
+		this._mapVariablesExplained = true;
+	}
+
 	if (this.services[serviceName]) {
 		service = this.services[serviceName];
 	} else {
@@ -176,20 +218,10 @@ proto.get = function(serviceName) {
 		this.buildLocks[serviceName] = true;
 		service = this.buildService(serviceName, params);
 		this.buildLocks[serviceName] = false;
+		this.services[serviceName] =  service;
 	}
 
 	return service;
-};
-
-proto.setVariables = function (variables) {
-	var mapVariables = {};
-
-	for (var ns in variables) {
-		mapVariables['%' + ns + '%'] = variables[ns];
-	}
-	this.mapVariables = mapVariables;
-
-	return this;
 };
 
 proto.getByTag = function(tagName) {

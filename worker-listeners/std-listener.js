@@ -19,9 +19,10 @@ proto.onOnline = function (worker) {
 
 proto.onStdMessage = function (worker, type, messageStream) {
 	this.logger.logObject({
-		message: messageStream.toString(),
+		message: 'fallback from worker console: ' + messageStream.toString(),
 		type: type,
 		id: worker.id,
+		namespace: 'console-fallback',
 		session: {'worker': worker, 'request': null}
 	});
 };

@@ -4,7 +4,6 @@ var FileTransport,
 
 FileTransport = function (options) {
 	this.name = 'FileTransport';
-	this.types = options.types;
 	this.fileName = options.fileName;
 	this.stream   = null;
 };
@@ -16,7 +15,6 @@ proto.processStart = function () {
 
 proto.processStop = function () {
 	this.stream && this.stream.end();
-	this.stream = null;
 };
 
 proto.log = function (logObject) {

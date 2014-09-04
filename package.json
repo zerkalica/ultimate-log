@@ -25,7 +25,7 @@
     "mocha": "^1.21.4"
   },
   "dependencies": {
-    "logstream": "^0.1.0",
+    "logstream": "git+https://github.com/zerkalica/LogStream",
     "node-serialize": "0.0.4"
   }
 }
