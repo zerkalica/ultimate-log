@@ -1,6 +1,7 @@
 var IPCTransport, proto;
 
 IPCTransport = function (options) {
+	this.name = 'IPCTransport';
 	options = options || {};
 	this.rpcNamespace = options.rpcNamespace || 'ultimate-logger';
 };

@@ -1,4 +1,3 @@
-'use strict';
 var MicroDi = require('./micro-di');
 var cluster = require('cluster');
 
@@ -9,7 +8,7 @@ var config = {
 			'types': ['info', 'warn', 'error']
 		}
 	},
-	'logger.transport.ipc.child': {
+	'logger.transport.ipc': {
 		'require': '%root%/transports/ipc-transport',
 		'options': {
 			'rpcNamespace': 'ultimate-logger'
@@ -49,11 +48,8 @@ var config = {
 		'options': {
 			'transports': [
 				{
-					'transport': '@logger.transport.ipc.child'
-				},
-				{
-					'transport': '@logger.transport.console',
-					'filters': ['@logger.filter.type.error']
+					'transport': '@logger.transport.ipc'
+					//'filters': ['@logger.filter.type.error']
 				}
 			]
 		}
@@ -61,13 +57,13 @@ var config = {
 	'logger.master': {
 		'require': '%root%/logger',
 		'options': {
-			'maxRecords': 10000,
+			'sessionLifeTime': 10000, // 10 seconds max
 			'transports': [
 				{
 					'transport': '@logger.transport.console',
 					'filters': ['@logger.filter.type.all'],
 					'aggregator': '@logger.aggregator.request_id'
-				},
+				}/*,
 				{
 					'transport': '@logger.transport.file.all',
 					'filters': ['@logger.filter.type.all'],
@@ -77,15 +73,33 @@ var config = {
 					'transport': '@logger.transport.file.error',
 					'filters': ['@logger.filter.type.error'],
 					'aggregator': '@logger.aggregator.request_id'
-				}
+				}*/
 			]
 		}
 	},
-	'logger.master.process-binder': {
+
+	'logger.master.ipc-worker-listener': {
+		'require': '%root%/worker-listeners/ipc-listener',
+		'tag': 'logger.worker-listener',
+		'options': {
+			'rpcNamespace': 'ultimate-logger',
+			'logger': '@logger.master'
+		}
+	},
+
+	'logger.master.std-worker-listener': {
+		'require': '%root%/worker-listeners/std-listener',
+		//'tag': 'logger.worker-listener',
+		'options': {
+			'rpcNamespace': 'ultimate-logger',
+			'logger': '@logger.master'
+		}
+	},
+
+	'logger.process-binder': {
 		'require': '%root%/process-binder',
 		'options': {
-			'reopenSignal': 'SIGHUP',
-			'logger': '@logger.master'
+			'reopenSignal': 'SIGHUP'
 		}
 	}
 };
@@ -99,47 +113,47 @@ var microDi = new MicroDi(config);
 microDi.setVariables(variables);
 
 function master() {
-	var processBinder = microDi.get('logger.master.process-binder');
-	var logger        = microDi.get('logger.master');
+	var processBinder   = microDi.get('logger.process-binder');
+	var workerListeners = microDi.getByTag('logger.worker-listener');
+	var logger          = microDi.get('logger.master');
+
+	processBinder.attach(logger);
+
 	var id = process.pid + '-master';
-	var workersCount = 3;
+	var workersCount = 2;
 
 	cluster.setupMaster({silent: true});
-
-	processBinder.attach(process);
-
-	logger.processStart();
-
-	logger.log('test 1 from master');
-	logger.log('test 2 from master', 'warn');
+	workerListeners.forEach(function (workerListner) {
+		workerListner.attach(cluster);
+	});
 
 	for (var i = 0; i < workersCount; i++) {
 		cluster.fork();
 	}
-	logger.log('test 3 from master', 'warn');
 };
 
 function child () {
+	var processBinder = microDi.get('logger.process-binder');
 	var logger = microDi.get('logger.child');
 
-	logger.processStart();
+	//processBinder.attach(logger);
 
-	logger.sessionStart(process.pid + '-req-child1', {req: 'test-request1'});
-	logger.log('test 1 from child');
-	logger.log('test 2 from child', 'error');
-	logger.sessionStop();
+	var session = logger.sessionStart('req1' + process.pid);
+	session.log('test 1 from child');
+	session.log('test 2 from child', 'error');
+	session.stop();
 
-	logger.sessionStart(process.pid + '-req-child2', {req: 'test-request2'});
-	logger.log('test 3 from child');
-	logger.log('test 4 from child', 'error');
-	logger.sessionStop();
+	session = logger.sessionStart('req2' + process.pid);
+	session.log('test 3 from child');
 
-	logger.processStop();
+	setTimeout(function () {
+		session.log('test 4 from child', 'error');
+		session.stop();
+	}, 100);
 }
 
 if (cluster.isMaster) {
 	master();
 } else {
-	process.send('test');
 	child();
 }

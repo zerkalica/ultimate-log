@@ -1,9 +1,9 @@
-'use strict';
 var FileTransport,
 	proto,
 	LogStream = require('logstream').LogStream;
 
 FileTransport = function (options) {
+	this.name = 'FileTransport';
 	this.types = options.types;
 	this.fileName = options.fileName;
 	this.stream   = null;

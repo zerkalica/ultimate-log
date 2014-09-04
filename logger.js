@@ -1,7 +1,7 @@
 'use strict';
 var Logger,
 	proto,
-	serialize = require('node-serialize').serialize;
+	nodeSerialize = require('node-serialize').serialize;
 
 function isObject(val) {
 	return (typeof val === 'object');
@@ -15,57 +15,70 @@ function isArray(val) {
 	return Array.isArray(val);
 }
 
-Logger = function (options) {
-	this.name = 'Logger';
-	this.options = options || {transports: []};
-	this.session = null;
-	this.sessionId = null;
-	this.transports = this.options.transports;
-	this.maxRecords = this.options.maxRecords || 10000;
-	this._recordCount = 0;
-};
-
-proto = Logger.prototype;
-
-proto._serialize = function(message) {
+var serialize = function(message) {
 	if (isArray(message)) {
 		message = message.map(function (item) {
-			return isString(item) ? item : serialize(item);
+			return isString(item) ? item : nodeSerialize(item);
 		}).join("\n");
 	} else if (isObject(message)) {
-		message = serialize(message);
+		message = nodeSerialize(message);
 	}
 
 	return message;
 };
 
+var LoggerSessionIdNotSpecifiedException = function () {
+	this.name = 'LoggerSessionIdNotSpecifiedException';
+	this.message = 'Id is not specified in logger.sessionStop or logger.logObject';
+};
+proto = LoggerSessionIdNotSpecifiedException.prototype;
+proto = new Error();
+proto.constructor = LoggerSessionIdNotSpecifiedException;
+
+
+var LoggerSession = function (options) {
+	this.name    = 'LoggerSession';
+	this.id      = options.id;
+	this.session = options.session;
+	this.logger  = options.logger;
+};
+proto = LoggerSession.prototype;
+
 proto.log = function (message, type) {
-	this.logObject({
-		message: this._serialize(message),
+	this.logger.logObject({
+		message: serialize(message),
 		type: type || 'info',
-		id: this.sessionId,
+		id: this.id,
 		session: this.session
 	});
 };
 
-proto.logObject = function (logObject) {
-	var filteredTransports = this.transports.filter(this._transportFilter.bind(this, logObject));
+proto.stop = function () {
+	this.logger.sessionStop(this.id);
+};
 
+Logger = function (options) {
+	this.name    = 'Logger';
+	options = options || {};
+	this.sessionLifeTime = options.sessionLifeTime || 10000;
+	this.transports = options.transports || [];
+	this._sessionIds = {};
+};
+
+proto = Logger.prototype;
+
+proto.logObject = function (logObject) {
+	if (!logObject || !logObject.id) {
+		throw new LoggerSessionIdNotSpecifiedException();
+	}
+	var filteredTransports = this.transports.filter(this._transportFilter.bind(this, logObject));
 	filteredTransports.forEach(function (item) {
-		if (item.aggregator && logObject.session) {
+		if (item.aggregator) {
 			item.aggregator.collect(logObject);
 		} else {
 			item.transport.log(logObject);
 		}
 	});
-
-	this._recordCount++;
-	//Fallback for aggregators, if memory limit and no flush called
-	if (this.recordCount > this.maxRecords) {
-		this.transports.forEach(function (item) {
-			item.aggregator && item.aggregator.flushAll(item.transport.log.bind(item.transport));
-		});
-	}
 };
 
 proto._transportFilter = function (logObject, item) {
@@ -101,25 +114,43 @@ proto.processStart = function () {
 };
 
 proto.processStop = function () {
-	this.sessionId && this.sessionStop();
+	for (var id in this._sessionIds) {
+		this.sessionStop(id);
+	}
 	this._callMethod('processStop');
 };
 
-proto.sessionStart = function (id, session) {
-	this.sessionId = id;
-	this.session   = this._serialize(session);
+proto.sessionStart = function (id, sessionObject) {
+	id = id || (process.pid + '-' + new Date().toString());
+	var loggerSession = new LoggerSession({
+		id: id,
+		logger: this,
+		session: serialize(sessionObject)
+	});
 	this._callMethod('sessionStart');
+
+	this._sessionIds[id] = {
+		session: loggerSession,
+		timerId: setTimeout(this.sessionStop.bind(this, id), this.sessionLifeTime)
+	};
+
+	return loggerSession;
 };
 
 proto.sessionStop = function (id) {
 	if (!id) {
-		this._recordCount = 0;
+		throw new LoggerSessionIdNotSpecifiedException();
 	}
 
-	id = id || this.sessionId;
+	if (this._sessionIds[id]) {
+		clearTimeout(this._sessionIds[id].timerId);
+		delete this._sessionIds[id];
+	}
+
 	this.transports.forEach(function (item) {
-		item.aggregator && item.aggregator.flush(id, item.transport.log.bind(item.transport));
-		item.transport.sessionStop && item.transport.sessionStop(id);
+		var transport = item.transport;
+		item.aggregator && item.aggregator.flush(id, transport.log.bind(transport));
+		transport.sessionStop && transport.sessionStop(id);
 	});
 };
 

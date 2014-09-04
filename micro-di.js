@@ -192,4 +192,16 @@ proto.setVariables = function (variables) {
 	return this;
 };
 
+proto.getByTag = function(tagName) {
+	var result = [];
+	for (var serviceName in this.config) {
+		var serviceConfig = this.config[serviceName];
+		if (serviceConfig.tag && serviceConfig.tag === tagName) {
+			result.push(this.get(serviceName));
+		}
+	}
+
+	return result;
+};
+
 module.exports = MicroDi;

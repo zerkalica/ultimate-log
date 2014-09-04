@@ -1,7 +1,9 @@
 'use strict';
-var ConsoleTransport, proto;
+var ConsoleTransport,
+	proto;
 
 ConsoleTransport = function (options) {
+	this.name = 'ConsoleTransport';
 	options = options || {};
 };
 proto = ConsoleTransport.prototype;

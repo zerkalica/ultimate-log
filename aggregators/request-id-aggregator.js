@@ -1,6 +1,7 @@
 var RequestIdAggregator, proto;
 
 RequestIdAggregator = function (options) {
+	this.name = 'RequestIdAggregator';
 	this.logObjects = {};
 };
 
@@ -16,7 +17,7 @@ proto.collect = function(logObject) {
 proto.flush = function (id, cb) {
 	if (Array.isArray(this.logObjects[id])) {
 		this.logObjects[id].forEach(cb);
-		this.logObjects[id] = [];
+		delete this.logObjects[id];
 	}
 };
 

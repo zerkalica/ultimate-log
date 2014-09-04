@@ -1,5 +1,8 @@
-var TypeFilter;
+var TypeFilter,
+	proto;
+
 TypeFilter = function (options) {
+	this.name = 'TypeFilter';
 	this.types = options.types;
 };
 proto = TypeFilter.prototype;
