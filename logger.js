@@ -77,6 +77,12 @@ proto._callMethod = function(name, params) {
 };
 
 proto.reopen = function () {
+	for (var id in this._sessionIds) {
+		aggregator = this.aggregators[this._sessionIds[id].namespace];
+		if (aggregator) {
+			aggregator.flush(id, this._callMethod.bind(this, 'log'));
+		}
+	}
 	this._callMethod('reopen');
 };
 
