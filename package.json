@@ -4,7 +4,7 @@
   "description": "Yet another logger with transports, cluster and logrotate support",
   "main": "index.js",
   "scripts": {
-    "run": "node examples/cluster",
+    "start": "node examples/cluster",
     "test": "node_modules/.bin/mocha"
   },
   "repository": {
@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "logstream": "git+https://github.com/zerkalica/LogStream",
-    "micro-di": "^1.0.0",
+    "micro-di": "^1.0.1",
     "node-serialize": "0.0.4"
   }
 }
