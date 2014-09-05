@@ -1,4 +1,4 @@
-var MicroDi   = require('./micro-di');
+var MicroDi   = require('micro-di');
 var cluster   = require('cluster');
 var path      = require('path');
 var loggerRegister  = require('../micro-di');
@@ -62,5 +62,7 @@ function child () {
 if (cluster.isMaster) {
 	master();
 } else {
+	console.log('tests1');
 	child();
+	console.error('test2');
 }
