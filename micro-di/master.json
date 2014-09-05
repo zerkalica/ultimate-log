@@ -18,7 +18,7 @@
 	"logger.filter.type.all": {
 		"require": "%ultimate-logger.libdir%/filters/type-filter",
 		"options": {
-			"types": ["info", "warn", "error"]
+			"types": ["debug", "info", "warn", "error"]
 		}
 	},
 	"logger.filter.type.error": {
@@ -31,15 +31,11 @@
 		"require": "%ultimate-logger.libdir%/aggregators/id-aggregator",
 		"options": {}
 	},
-
-	"logger.session.default": {
-		"require": "%ultimate-logger.libdir%/logger-session"
-	},
-
 	"logger.master": {
 		"require": "%ultimate-logger.libdir%/logger",
 		"options": {
 			"loggerSession": "@logger.session.default",
+			"serialize": "@logger.serializer.node-serialize",
 			"sessionLifeTime": 10000,
 			"aggregators": {
 				"request": "@logger.aggregator.id"
@@ -72,13 +68,6 @@
 		"options": {
 			"rpcNamespace": "ultimate-logger",
 			"logger": "@logger.master"
-		}
-	},
-
-	"logger.process-binder": {
-		"require": "%ultimate-logger.libdir%/process-binder",
-		"options": {
-			"reopenSignal": "SIGHUP"
 		}
 	}
 }

@@ -9,7 +9,7 @@ microDi.addVariables({
 	'project.rootdir': path.dirname(require.resolve('../index'))
 });
 
-loggerRegister(microDi);
+loggerRegister(microDi, !cluster.isMaster);
 
 function master() {
 	var processBinder   = microDi.get('logger.process-binder');

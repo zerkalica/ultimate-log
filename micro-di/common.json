@@ -1,0 +1,16 @@
+{
+	"logger.session.default": {
+		"require": "%ultimate-logger.libdir%/logger-session"
+	},
+
+	"logger.serializer.node-serialize": {
+		"require": "%ultimate-logger.libdir%/serializers/node-serialize"
+	},
+
+	"logger.process-binder": {
+		"require": "%ultimate-logger.libdir%/process-binder",
+		"options": {
+			"reopenSignal": "SIGHUP"
+		}
+	}
+}

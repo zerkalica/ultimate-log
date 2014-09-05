@@ -5,26 +5,16 @@
 			"rpcNamespace": "ultimate-logger"
 		}
 	},
-
-	"logger.session.default": {
-		"require": "%ultimate-logger.libdir%/logger-session"
-	},
-
 	"logger.child": {
 		"require": "%ultimate-logger.libdir%/logger",
 		"options": {
+			"serialize": "@logger.serializer.node-serialize",
 			"loggerSession": "@logger.session.default",
 			"transports": [
 				{
 					"transport": "@logger.transport.ipc"
 				}
 			]
-		}
-	},
-	"logger.process-binder": {
-		"require": "%ultimate-logger.libdir%/process-binder",
-		"options": {
-			"reopenSignal": "SIGHUP"
 		}
 	}
 }
