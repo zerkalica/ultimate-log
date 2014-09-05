@@ -31,6 +31,18 @@
 		"require": "%ultimate-logger.libdir%/aggregators/id-aggregator",
 		"options": {}
 	},
+
+	"logger.master.transports": [
+		{
+			"transport": "@logger.transport.console",
+			"filters": ["@logger.filter.type.all"]
+		},
+		{
+			"transport": "@logger.transport.file.all",
+			"filters": ["@logger.filter.type.all"]
+		}
+	],
+
 	"logger.master": {
 		"require": "%ultimate-logger.libdir%/logger",
 		"options": {
@@ -40,16 +52,7 @@
 			"aggregators": {
 				"request": "@logger.aggregator.id"
 			},
-			"transports": [
-				{
-					"transport": "@logger.transport.console",
-					"filters": ["@logger.filter.type.all"]
-				},
-				{
-					"transport": "@logger.transport.file.all",
-					"filters": ["@logger.filter.type.all"]
-				}
-			]
+			"transports": "@logger.master.transports"
 		}
 	},
 
