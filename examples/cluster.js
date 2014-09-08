@@ -38,7 +38,7 @@ function master() {
 function child () {
 	var req = {test: 'test-req'};
 	var processBinder = microDi.get('logger.process-binder');
-	var loggerFactory        = microDi.get('logger.child');
+	var loggerFactory = microDi.get('logger.child');
 
 	processBinder.attach(loggerFactory);
 
