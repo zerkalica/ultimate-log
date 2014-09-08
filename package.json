@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node examples/cluster",
-    "test": "node_modules/.bin/mocha"
+    "test": "node_modules/.bin/mocha --recursive tests"
   },
   "repository": {
     "type": "git",
