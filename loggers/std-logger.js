@@ -1,6 +1,25 @@
 var ul = require('../lib/ul');
 
-var defaults = function (config, defaults) {
+var loggerDefaults = {
+	sessionLifeTime: 10000,
+	aggregate: true,
+	cluster: undefined,
+	rpcNamespace: 'ultimate-logger',
+	reopenSignal: 'SUGHUP',
+	transports: [
+		{
+			transport: 'console',
+			types: ['debug', 'info', 'warn', 'error']
+		},
+		{
+			transport: 'file',
+			fileName: './test/logs/app.log',
+			types: ['debug', 'info', 'warn', 'error']
+		}
+	]
+};
+
+var setDefaults = function (config, defaults) {
 	config = config || {};
 
 	for (var i in defaults) {
@@ -10,25 +29,8 @@ var defaults = function (config, defaults) {
 	return config;
 };
 
-var MasterLogger = function(config) {
-	config = defaults(config, {
-		sessionLifeTime: 10000,
-		aggregate: true,
-		cluster: undefined,
-		rpcNamespace: 'ultimate-logger',
-		reopenSignal: 'SUGHUP',
-		transports: [
-			{
-				transport: 'console',
-				types: ['debug', 'info', 'warn', 'error']
-			},
-			{
-				transport: 'file',
-				fileName: './test/logs/app.log',
-				types: ['debug', 'info', 'warn', 'error']
-			}
-		]
-	});
+var StdLogger = function(config) {
+	setDefaults(config, loggerDefaults);
 
 	var configToTransports = function (item) {
 		var Transport = ul.Transports[item.transport] || ul.Transports.console;
@@ -69,19 +71,4 @@ var MasterLogger = function(config) {
 	return logger;
 };
 
-var ChildLogger = function (config) {
-	return MasterLogger(defaults(config, {
-		aggregate: false,
-		transports: [
-			{
-				transport: 'ipc',
-				rpcNamespace: 'ultimate-logger'
-			}
-		]
-	}));
-};
-
-module.exports = {
-	child: ChildLogger,
-	master: MasterLogger
-};
+module.exports = StdLogger;

@@ -1,12 +1,13 @@
 var cluster   = require('cluster');
 var path      = require('path');
-var stdLogger = require('../loggers/std-logger');
+var StdLogger = require('../loggers/std-logger');
 
 var logDir    = path.dirname(require.resolve('../index')) + '/tests/logs';
 
 function master() {
-	var loggerFactory = stdLogger.master({
+	var logger = StdLogger({
 		cluster: cluster,
+		aggregate: true,
 		transports: [
 			{
 				transport: 'console',
@@ -18,11 +19,10 @@ function master() {
 				types: ['debug', 'info', 'warn', 'error']
 			}
 		]
-	});
+	}).sessionStart({namespace: 'master'});
+
 	var workersCount = 2;
 	cluster.setupMaster({silent: true});
-
-	var logger = loggerFactory.sessionStart({namespace: 'master'});
 
 	logger.log('master start');
 
@@ -33,7 +33,15 @@ function master() {
 
 function child () {
 	var req = {test: 'test-req'};
-	var loggerFactory = stdLogger.child();
+	var loggerFactory = StdLogger({
+		transports: [
+			{
+				transport: 'ipc',
+				rpcNamespace: 'ultimate-logger'
+			}
+		]
+	});
+
 	var logger = loggerFactory.sessionStart({namespace: 'request', data: req});
 	logger.log('test 1 from child');
 	logger.log('test 2 from child', 'error');
