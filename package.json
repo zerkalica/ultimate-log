@@ -4,7 +4,7 @@
   "description": "Yet another logger with transports, cluster and logrotate support",
   "main": "index.js",
   "scripts": {
-    "start": "node examples/cluster-di",
+    "start": "node examples/cluster",
     "test": "node_modules/.bin/mocha --recursive tests"
   },
   "repository": {
@@ -23,6 +23,7 @@
   "homepage": "https://github.com/zerkalica/ultimate-log",
   "devDependencies": {
     "chai": "^1.9.1",
+    "chai-spies": "^0.5.1",
     "mocha": "^1.21.4"
   },
   "dependencies": {
