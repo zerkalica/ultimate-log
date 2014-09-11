@@ -4,9 +4,7 @@ var defaults = function (config, defaults) {
 	config = config || {};
 
 	for (var i in defaults) {
-		if (config.hasOwnProperty(i) && typeof config[i] !== 'undefined') {
-			config[i] = defaults[i];
-		}
+		config[i] = config[i] || defaults[i];
 	}
 
 	return config;
@@ -33,8 +31,9 @@ var MasterLogger = function(config) {
 	});
 
 	var configToTransports = function (item) {
+		var Transport = ul.Transports[item.transport] || ul.Transports.console;
 		return {
-			transport: ul.Transports[item.transport] ? new ul.Transports[item.transport](item) : new ul.Transports.console(item),
+			transport: new Transport(item),
 			filters:   item.types ? [new ul.Filters.type(item)] : undefined
 		};
 	};
@@ -43,20 +42,20 @@ var MasterLogger = function(config) {
 		serialize:     ul.NodeSerializer,
 		loggerSession: ul.LoggerSession,
 		sessionLifeTime: config.sessionLifeTime,
-		aggregators: aggregate ? {request: new ul.IdAggregator()} : undefined,
+		aggregators: config.aggregate ? {request: new ul.IdAggregator()} : undefined,
 		transports: config.transports.map(configToTransports)
 	});
 	if (config.cluster) {
 		var listener = new ul.Listeners.ipc({
 			logger: logger,
-			config.rpcNamespace
+			rpcNamespace: config.rpcNamespace
 		});
 		listener.attach(config.cluster);
 
 		listener = new ul.Listeners.std({
 			logger: logger,
 		});
-		listener.attach(cluster);
+		listener.attach(config.cluster);
 	}
 
 	if (config.reopenSignal) {
@@ -86,8 +85,3 @@ module.exports = {
 	child: ChildLogger,
 	master: MasterLogger
 };
-
-/**
- * var StdLogger = require('ultimate-logger/loggers/std-logger');
- * var logger    = StdLogger.master({rpcNamespace: 'ultimate-logger'});
- */
