@@ -11,10 +11,13 @@ microDi.addVariables({
 
 loggerRegister(microDi, !cluster.isMaster);
 
+var container = microDi.build();
+
+
 function master() {
-	var processBinder   = microDi.get('logger.process-binder');
-	var workerListeners = microDi.getByTag('logger.worker-listener');
-	var loggerFactory   = microDi.get('logger.master');
+	var processBinder   = container.get('logger.process-binder');
+	var workerListeners = container.getByTag('logger.worker-listener');
+	var loggerFactory   = container.get('logger.master');
 
 	processBinder.attach(loggerFactory);
 
@@ -37,8 +40,8 @@ function master() {
 
 function child () {
 	var req = {test: 'test-req'};
-	var processBinder = microDi.get('logger.process-binder');
-	var loggerFactory = microDi.get('logger.child');
+	var processBinder = container.get('logger.process-binder');
+	var loggerFactory = container.get('logger.child');
 
 	processBinder.attach(loggerFactory);
 
