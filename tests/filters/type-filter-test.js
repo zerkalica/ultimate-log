@@ -29,11 +29,5 @@ describe('filters/type-filter', function () {
 			typeFilter.isValid(logObjects.l2).should.to.be.false;
 			typeFilter.isValid(logObjects.l1a).should.to.be.true;
 		});
-		it('should filter only warn message', function () {
-			var typeFilter = new TypeFilter({types: ['warn']});
-			typeFilter.isValid(logObjects.l1).should.to.be.false;
-			typeFilter.isValid(logObjects.l2).should.to.be.false;
-			typeFilter.isValid(logObjects.l1a).should.to.be.true;
-		});
 	});
 });
