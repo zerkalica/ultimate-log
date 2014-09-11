@@ -69,7 +69,6 @@
 		"require": "%ultimate-logger.libdir%/worker-listeners/std-listener",
 		"tag": "logger.worker-listener",
 		"options": {
-			"rpcNamespace": "ultimate-logger",
 			"logger": "@logger.master"
 		}
 	}
