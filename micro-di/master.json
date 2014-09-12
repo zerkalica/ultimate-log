@@ -27,19 +27,25 @@
 			"types": ["error"]
 		}
 	},
-	"logger.aggregator.id": {
-		"require": "%ultimate-logger.libdir%/aggregators/id-aggregator",
-		"options": {}
-	},
 
+	"logger.master.transports.aggregator": {
+		"require": "%ultimate-logger.libdir%/transports/proxy-aggregator-transport",
+		"options": {
+			"transports": [
+				{
+					"transport": "@logger.transport.console",
+					"filters": ["@logger.filter.type.all"]
+				},
+				{
+					"transport": "@logger.transport.file.all",
+					"filters": ["@logger.filter.type.all"]
+				}
+			]
+		}
+	},
 	"logger.master.transports": [
 		{
-			"transport": "@logger.transport.console",
-			"filters": ["@logger.filter.type.all"]
-		},
-		{
-			"transport": "@logger.transport.file.all",
-			"filters": ["@logger.filter.type.all"]
+			"transport": "@logger.master.transports.aggregator"
 		}
 	],
 

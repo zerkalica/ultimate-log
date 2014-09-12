@@ -34,6 +34,10 @@ function StdLogger(config) {
 
 	function configToTransports(item) {
 		var Transport = ul.Transports[item.transport] || ul.Transports.console;
+		if (item.transport === 'aggregator') {
+			item.transports = item.transports.map(configToTransports);
+		}
+
 		return {
 			transport: new Transport(item),
 			filters:   item.types ? [new ul.Filters.type(item)] : undefined
@@ -44,9 +48,9 @@ function StdLogger(config) {
 		serialize:     ul.NodeSerializer,
 		loggerSession: ul.LoggerSession,
 		sessionLifeTime: config.sessionLifeTime,
-		aggregators: config.aggregate ? {request: new ul.IdAggregator()} : undefined,
 		transports: config.transports.map(configToTransports)
 	});
+
 	if (config.cluster) {
 		var listener = new ul.Listeners.ipc({
 			logger: logger,
