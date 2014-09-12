@@ -19,7 +19,7 @@ var loggerDefaults = {
 	]
 };
 
-var setDefaults = function (config, defaults) {
+function setDefaults(config, defaults) {
 	config = config || {};
 
 	for (var i in defaults) {
@@ -29,10 +29,10 @@ var setDefaults = function (config, defaults) {
 	return config;
 };
 
-var StdLogger = function(config) {
+function StdLogger(config) {
 	setDefaults(config, loggerDefaults);
 
-	var configToTransports = function (item) {
+	function configToTransports(item) {
 		var Transport = ul.Transports[item.transport] || ul.Transports.console;
 		return {
 			transport: new Transport(item),
