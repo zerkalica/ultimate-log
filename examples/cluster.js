@@ -9,6 +9,9 @@ function master() {
 		cluster: cluster,
 		aggregate: true,
 		reopenSignal: 'SUGHUP',
+		onDestroy: function () {
+			this.log({message: 'on exit called', type: 'info'});
+		},
 		transports: [
 			{
 				transport: 'aggregator',
@@ -25,7 +28,7 @@ function master() {
 				]
 			}
 		]
-	}).sessionStart({namespace: 'master'});
+	}).sessionStart();
 
 	var workersCount = 2;
 	cluster.setupMaster({silent: true});
@@ -49,12 +52,13 @@ function child () {
 		]
 	});
 
-	var logger = loggerFactory.sessionStart({namespace: 'request', data: req});
+
+	var logger = loggerFactory.sessionStart({data: req});
 	logger.log('test 1 from child');
 	logger.log('test 2 from child', 'error');
 	logger.stop();
 
-	logger = loggerFactory.sessionStart({namespace: 'request'});
+	logger = loggerFactory.sessionStart();
 	logger.log('test 3 from child');
 
 	logger.session.data = req;

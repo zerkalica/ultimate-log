@@ -6,6 +6,7 @@ var loggerDefaults = {
 	cluster: undefined,
 	rpcNamespace: 'ultimate-logger',
 	reopenSignal: null,
+	onDestroy: null,
 	transports: [
 		{
 			transport: 'console',
@@ -48,6 +49,7 @@ function StdLogger(config) {
 		serialize:     ul.NodeSerializer,
 		loggerSession: ul.LoggerSession,
 		sessionLifeTime: config.sessionLifeTime,
+		onDestroy: config.onDestroy,
 		transports: config.transports.map(configToTransports)
 	});
 
