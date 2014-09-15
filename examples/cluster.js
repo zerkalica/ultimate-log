@@ -8,15 +8,21 @@ function master() {
 	var logger = StdLogger({
 		cluster: cluster,
 		aggregate: true,
+		reopenSignal: 'SUGHUP',
 		transports: [
 			{
-				transport: 'console',
-				types: ['debug', 'info', 'warn', 'error']
-			},
-			{
-				transport: 'file',
-				fileName:  logDir + '/app.log',
-				types: ['debug', 'info', 'warn', 'error']
+				transport: 'aggregator',
+				transports: [
+					{
+						transport: 'console',
+						types: ['debug', 'info', 'warn', 'error']
+					},
+					{
+						transport: 'file',
+						fileName:  logDir + '/app.log',
+						types: ['debug', 'info', 'warn', 'error']
+					}
+				]
 			}
 		]
 	}).sessionStart({namespace: 'master'});
@@ -24,12 +30,13 @@ function master() {
 	var workersCount = 2;
 	cluster.setupMaster({silent: true});
 
-	logger.log('master start');
+	logger.log('master start1');
+	logger.log('master start2');
 
 	for (var i = 0; i < workersCount; i++) {
 		cluster.fork();
 	}
-};
+}
 
 function child () {
 	var req = {test: 'test-req'};

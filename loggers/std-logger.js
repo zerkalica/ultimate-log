@@ -5,7 +5,7 @@ var loggerDefaults = {
 	aggregate: true,
 	cluster: undefined,
 	rpcNamespace: 'ultimate-logger',
-	reopenSignal: 'SUGHUP',
+	reopenSignal: null,
 	transports: [
 		{
 			transport: 'console',
@@ -27,7 +27,7 @@ function setDefaults(config, defaults) {
 	}
 
 	return config;
-};
+}
 
 function StdLogger(config) {
 	setDefaults(config, loggerDefaults);
@@ -42,7 +42,7 @@ function StdLogger(config) {
 			transport: new Transport(item),
 			filters:   item.types ? [new ul.Filters.type(item)] : undefined
 		};
-	};
+	}
 
 	var logger = new ul.Logger({
 		serialize:     ul.NodeSerializer,
@@ -70,9 +70,11 @@ function StdLogger(config) {
 		});
 
 		pb.attach(logger);
+	} else {
+		logger.init();
 	}
 
 	return logger;
-};
+}
 
 module.exports = StdLogger;
