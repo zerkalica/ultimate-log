@@ -61,7 +61,7 @@ function child () {
 	logger = loggerFactory.sessionStart();
 	logger.log('test 3 from child');
 
-	logger.session.data = req;
+	logger.setData(req);
 
 	setTimeout(function () {
 		logger.log('test 4 from child', 'error');
