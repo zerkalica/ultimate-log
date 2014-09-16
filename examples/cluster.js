@@ -7,7 +7,6 @@ var logDir    = path.dirname(require.resolve('../index')) + '/tests/logs';
 function master() {
 	var logger = StdLogger({
 		cluster: cluster,
-		aggregate: true,
 		reopenSignal: 'SUGHUP',
 		onDestroy: function () {
 			this.log({message: 'on exit called', type: 'info'});
