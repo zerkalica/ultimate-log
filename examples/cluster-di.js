@@ -26,7 +26,7 @@ function master() {
 
 	cluster.setupMaster({silent: true});
 	workerListeners.forEach(function (workerListner) {
-		workerListner.attach(cluster);
+		workerListner.attach(loggerFactory, cluster);
 	});
 
 	var logger = loggerFactory.sessionStart({namespace: 'master'});

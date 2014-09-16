@@ -55,15 +55,12 @@ function StdLogger(config) {
 
 	if (config.cluster) {
 		var listener = new ul.Listeners.ipc({
-			logger: logger,
 			rpcNamespace: config.rpcNamespace
 		});
-		listener.attach(config.cluster);
+		listener.attach(logger, config.cluster);
 
-		listener = new ul.Listeners.std({
-			logger: logger,
-		});
-		listener.attach(config.cluster);
+		listener = new ul.Listeners.std();
+		listener.attach(logger, config.cluster);
 	}
 
 	if (config.reopenSignal) {
