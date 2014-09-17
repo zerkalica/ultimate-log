@@ -8,8 +8,8 @@ function master() {
 	var logger = StdLogger({
 		cluster: cluster,
 		reopenSignal: 'SUGHUP',
-		onDestroy: function () {
-			this.log({message: 'on exit called', type: 'info'});
+		onDestroy: function (log) {
+			log({message: 'on exit called', type: 'info', direct: false});
 		},
 		transports: [
 			{
