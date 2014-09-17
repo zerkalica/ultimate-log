@@ -52,7 +52,7 @@ function child () {
 	});
 
 
-	var logger = loggerFactory.sessionStart({data: req});
+	var logger = loggerFactory.sessionStart({session: req});
 	logger.log('test 1 from child');
 	logger.log('test 2 from child', 'error');
 	logger.stop();
@@ -60,7 +60,7 @@ function child () {
 	logger = loggerFactory.sessionStart();
 	logger.log('test 3 from child');
 
-	logger.setData(req);
+	logger.setSessionData(req);
 
 	setTimeout(function () {
 		logger.log('test 4 from child', 'error');
