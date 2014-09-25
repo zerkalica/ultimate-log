@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "logstream": "git+https://github.com/zerkalica/LogStream",
-    "micro-di": "^1.0.5",
+    "micro-di": "^1.0.6",
     "node-serialize": "0.0.4"
   }
 }

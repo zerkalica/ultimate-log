@@ -1,35 +1,35 @@
 {
 	"logger.transport.console": {
-		"require": "%ultimate-logger.libdir%/transports/console-transport",
+		"class": "UltimateLogger.Transports.console",
 		"options": {}
 	},
 	"logger.transport.file.all": {
-		"require": "%ultimate-logger.libdir%/transports/file-transport",
+		"class": "UltimateLogger.Transports.file",
 		"options": {
 			"fileName": "%log.dir%/all.log"
 		}
 	},
 	"logger.transport.file.error": {
-		"require": "%ultimate-logger.libdir%/transports/file-transport",
+		"class": "UltimateLogger.Transports.file",
 		"options": {
 			"fileName": "%log.dir%/error.log"
 		}
 	},
 	"logger.filter.type.all": {
-		"require": "%ultimate-logger.libdir%/filters/type-filter",
+		"class": "UltimateLogger.Filters.type",
 		"options": {
 			"types": ["debug", "info", "warn", "error"]
 		}
 	},
 	"logger.filter.type.error": {
-		"require": "%ultimate-logger.libdir%/filters/type-filter",
+		"class": "UltimateLogger.Filters.type",
 		"options": {
 			"types": ["error"]
 		}
 	},
 
 	"logger.master.transports.aggregator": {
-		"require": "%ultimate-logger.libdir%/transports/proxy-aggregator-transport",
+		"class": "UltimateLogger.Transports.aggregator",
 		"options": {
 			"transports": [
 				{
@@ -50,20 +50,17 @@
 	],
 
 	"logger.master": {
-		"require": "%ultimate-logger.libdir%/logger",
+		"class": "UltimateLogger.Logger",
 		"options": {
 			"loggerSession": "@logger.session.default",
 			"serialize": "@logger.serializer.node-serialize",
 			"sessionLifeTime": 10000,
-			"aggregators": {
-				"request": "@logger.aggregator.id"
-			},
 			"transports": "@logger.master.transports"
 		}
 	},
 
 	"logger.master.ipc-worker-listener": {
-		"require": "%ultimate-logger.libdir%/worker-listeners/ipc-listener",
+		"class": "UltimateLogger.Listeners.ipc",
 		"tag": "logger.worker-listener",
 		"options": {
 			"rpcNamespace": "ultimate-logger",
@@ -72,7 +69,7 @@
 	},
 
 	"logger.master.std-worker-listener": {
-		"require": "%ultimate-logger.libdir%/worker-listeners/std-listener",
+		"class": "UltimateLogger.Listeners.std",
 		"tag": "logger.worker-listener",
 		"options": {
 			"logger": "@logger.master"
