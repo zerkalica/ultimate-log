@@ -25,8 +25,8 @@ function master() {
 	var workersCount = 2;
 
 	cluster.setupMaster({silent: true});
-	workerListeners.forEach(function (workerListner) {
-		workerListner.attach(loggerFactory, cluster);
+	workerListeners.forEach(function (workerListener) {
+		workerListener.attach(loggerFactory, cluster);
 	});
 
 	var logger = loggerFactory.sessionStart({namespace: 'master'});
@@ -45,12 +45,12 @@ function child () {
 
 	processBinder.attach(loggerFactory);
 
-	var logger = loggerFactory.sessionStart({namespace: 'request', data: req});
+	var logger = loggerFactory.sessionStart({data: req});
 	logger.log('test 1 from child');
 	logger.log('test 2 from child', 'error');
 	logger.stop();
 
-	logger = loggerFactory.sessionStart({namespace: 'request'});
+	logger = loggerFactory.sessionStart();
 	logger.log('test 3 from child');
 
 	logger.session.data = req;

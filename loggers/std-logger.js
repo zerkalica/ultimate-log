@@ -2,7 +2,6 @@ var ul = require('../lib/ul');
 
 var loggerDefaults = {
 	sessionLifeTime: 10000,
-	aggregate: true,
 	cluster: undefined,
 	rpcNamespace: 'ultimate-logger',
 	reopenSignal: null,

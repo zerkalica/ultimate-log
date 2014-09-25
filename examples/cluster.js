@@ -5,12 +5,14 @@ var StdLogger = require('../loggers/std-logger');
 var logDir    = path.dirname(require.resolve('../index')) + '/tests/logs';
 
 function master() {
+	function onDestroy(log) {
+		log({message: 'on exit called', type: 'info', direct: false});
+	}
+
 	var logger = StdLogger({
 		cluster: cluster,
 		reopenSignal: 'SUGHUP',
-		onDestroy: function (log) {
-			log({message: 'on exit called', type: 'info', direct: false});
-		},
+		onDestroy: onDestroy,
 		transports: [
 			{
 				transport: 'aggregator',
