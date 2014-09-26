@@ -1,7 +1,7 @@
 var TypeFilter = require('../../lib/filters/type-filter');
 var helpers    = require('../test-helpers');
 var chai       = helpers.chai;
-var logObjects = require('../fixtures/logObjects');
+var logObjects = helpers.fixtures;
 
 describe('filters/type-filter', function () {
 	describe('#isValid', function () {
