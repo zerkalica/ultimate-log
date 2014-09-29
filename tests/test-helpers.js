@@ -1,11 +1,13 @@
 var chai   = require('chai');
-var spies  = require('chai-spies');
 var should = chai.should();
-var logObjects = require('./fixtures/logObjects');
+var sinon  = require('sinon');
+var sinonChai = require('sinon-chai');
+chai.use(sinonChai);
 
-chai.use(spies);
+var logObjects = require('./fixtures/logObjects');
 
 module.exports = {
 	chai: chai,
+	spy: sinon.spy,
 	fixtures: logObjects
 };

@@ -1,6 +1,6 @@
 var FileTransport = require('../../lib/transports/file-transport');
 var helpers    = require('../test-helpers');
-var chai       = helpers.chai;
+var spy        = helpers.spy;
 var logObjects = helpers.fixtures;
 
 describe('transports/file-transport', function () {
@@ -10,9 +10,9 @@ describe('transports/file-transport', function () {
 
 	beforeEach(function () {
 		streamMethods = {
-			end:    chai.spy(),
-			write:  chai.spy(),
-			reopen: chai.spy()
+			end:    spy(),
+			write:  spy(),
+			reopen: spy()
 		};
 		FakeStreamProto = function FakeStreamProto(options) {
 			return streamMethods;
@@ -23,7 +23,7 @@ describe('transports/file-transport', function () {
 
 	describe('#init', function () {
 		it('should create new stream object from prototype', function () {
-			var FakeStreamProto = chai.spy();
+			var FakeStreamProto = spy();
 			var fileTransport = new FileTransport({streamProto: FakeStreamProto, fileName: 'test.name.txt'});
 			fileTransport.init();
 			FakeStreamProto.should.have.been.called.once;

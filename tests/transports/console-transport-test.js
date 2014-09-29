@@ -1,22 +1,25 @@
 var ConsoleTransport = require('../../lib/transports/console-transport');
 var helpers    = require('../test-helpers');
-var chai       = helpers.chai;
+var spy        = helpers.spy;
 var logObjects = helpers.fixtures;
 
 describe('transports/console-transport', function () {
-	describe('#log', function () {
-		var consoleTransport,
-			log,
-			fakeConsole;
+	var consoleTransport,
+		fakeConsole;
+	beforeEach(function () {
+		fakeConsole = {
+			log: spy(),
+			warn: spy(),
+			error: spy()
+		};
+		consoleTransport = new ConsoleTransport({console: fakeConsole});
+		log              = consoleTransport.log.bind(consoleTransport);
+	});
 
+	describe('#log', function () {
+		var log;
 		beforeEach(function () {
-			fakeConsole = {
-				log: chai.spy(),
-				warn: chai.spy(),
-				error: chai.spy()
-			};
-			consoleTransport = new ConsoleTransport({console: fakeConsole});
-			log              = consoleTransport.log.bind(consoleTransport);
+			log = consoleTransport.log.bind(consoleTransport);
 		});
 
 		it ('should throw TypeError if not an object given', function () {
@@ -33,13 +36,13 @@ describe('transports/console-transport', function () {
 		});
 
 		it('should output message to console with default type log', function () {
-			log({message: 'test'});
-			fakeConsole.log.should.have.been.called.once;
+			log({message: 'test', id: 'testId'});
+			fakeConsole.log.should.have.been.calledWith('[testId]: test').once;
 		});
 
 		it('should output message to console with warn type log', function () {
 			log({message: 'test', type: 'warn'});
-			fakeConsole.warn.should.have.been.called.once;
+			fakeConsole.warn.should.have.been.calledWith('[undefined]: test').once;
 		});
 	});
 });

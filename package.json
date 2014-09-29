@@ -23,8 +23,9 @@
   "homepage": "https://github.com/zerkalica/ultimate-log",
   "devDependencies": {
     "chai": "^1.9.1",
-    "chai-spies": "^0.5.1",
-    "mocha": "^1.21.4"
+    "mocha": "^1.21.4",
+    "sinon": "^1.10.3",
+    "sinon-chai": "^2.5.0"
   },
   "dependencies": {
     "logstream": "git+https://github.com/zerkalica/LogStream",
