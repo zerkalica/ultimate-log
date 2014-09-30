@@ -4,7 +4,7 @@ var sinon  = require('sinon');
 var sinonChai = require('sinon-chai');
 chai.use(sinonChai);
 
-var logObjects = require('./fixtures/logObjects');
+var logObjects = require('./_fixtures/logObjects');
 
 module.exports = {
 	chai: chai,

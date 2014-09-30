@@ -6,7 +6,7 @@ var ul           = require('../lib/ul');
 module.exports = function (microDi, isChild) {
 	microDi.addModules({UltimateLogger: ul});
 	microDi.addVariables({
-		'log.dir': '%project.rootdir%/tests/logs'
+		'log.dir': '%project.rootdir%/logs'
 	});
 	microDi.addConfig(commonConfig);
 	microDi.addConfig(isChild ? childConfig : masterConfig);

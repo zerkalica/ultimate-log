@@ -2,7 +2,7 @@ var cluster   = require('cluster');
 var path      = require('path');
 var StdLogger = require('../loggers/std-logger');
 
-var logDir    = path.dirname(require.resolve('../index')) + '/tests/logs';
+var logDir    = path.dirname(require.resolve('../index')) + '/logs';
 
 function master() {
 	function onDestroy(log) {

@@ -13,7 +13,6 @@ describe('transports/console-transport', function () {
 			error: spy()
 		};
 		consoleTransport = new ConsoleTransport({console: fakeConsole});
-		log              = consoleTransport.log.bind(consoleTransport);
 	});
 
 	describe('#log', function () {
