@@ -1,0 +1,30 @@
+{
+	"l1": {
+		"id": "1",
+		"namespace": "test",
+		"message": "test-message",
+		"type": "info",
+		"data": {
+			"test": "test"
+		}
+	},
+	"l1a": {
+		"id": "1",
+		"namespace": "test2",
+		"message": "test-message",
+		"type": "warn",
+		"direct": true,
+		"data": {
+			"test": "test2"
+		}
+	},
+	"l2": {
+		"id": "2",
+		"namespace": "test2",
+		"message": "test-message",
+		"type": "debug",
+		"data": {
+			"test": "test2"
+		}
+	}
+}
