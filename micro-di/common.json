@@ -3,8 +3,11 @@
 		"class": "UltimateLogger.LoggerSession"
 	},
 
-	"logger.serializer.node-serialize": {
-		"class": "UltimateLogger.NodeSerializer"
+	"logger.formatter.token-formatter": {
+		"class": "UltimateLogger.Formatters.TokenFormatter",
+		"options": {
+			"format": "[%type%][%id%]: %message%"
+		}
 	},
 
 	"logger.process-binder": {

@@ -12,7 +12,12 @@ describe('transports/console-transport', function () {
 			warn: spy(),
 			error: spy()
 		};
-		consoleTransport = new ConsoleTransport({console: fakeConsole});
+		var fakeFormatter = {
+			format: function (logObject) {
+				return '[' + logObject.id + ']: ' + logObject.message;
+			}
+		};
+		consoleTransport = new ConsoleTransport({console: fakeConsole, formatter: fakeFormatter});
 	});
 
 	describe('#log', function () {

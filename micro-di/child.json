@@ -8,7 +8,6 @@
 	"logger.child": {
 		"class": "UltimateLogger.Logger",
 		"options": {
-			"serialize": "@logger.serializer.node-serialize",
 			"loggerSession": "@logger.session.default",
 			"transports": [
 				{

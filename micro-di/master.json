@@ -6,13 +6,15 @@
 	"logger.transport.file.all": {
 		"class": "UltimateLogger.Transports.file",
 		"options": {
-			"fileName": "%log.dir%/all.log"
+			"fileName": "%log.dir%/all.log",
+			"formatter": "@logger.formatter.token-formatter"
 		}
 	},
 	"logger.transport.file.error": {
 		"class": "UltimateLogger.Transports.file",
 		"options": {
-			"fileName": "%log.dir%/error.log"
+			"fileName": "%log.dir%/error.log",
+			"formatter": "@logger.formatter.token-formatter"
 		}
 	},
 	"logger.filter.type.all": {
@@ -53,7 +55,6 @@
 		"class": "UltimateLogger.Logger",
 		"options": {
 			"loggerSession": "@logger.session.default",
-			"serialize": "@logger.serializer.node-serialize",
 			"sessionLifeTime": 10000,
 			"transports": "@logger.master.transports"
 		}

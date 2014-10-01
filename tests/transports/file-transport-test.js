@@ -17,7 +17,12 @@ describe('transports/file-transport', function () {
 		FakeStreamProto = function FakeStreamProto(options) {
 			return streamMethods;
 		};
-		fileTransport = new FileTransport({streamProto: FakeStreamProto, fileName: 'test.name.txt'});
+		var fakeFormatter = {
+			format: function (logObject) {
+				return '[' + logObject.id + '][' + logObject.type + ']: ' + logObject.message;
+			}
+		};
+		fileTransport = new FileTransport({streamProto: FakeStreamProto, fileName: 'test.name.txt', formatter: fakeFormatter});
 		
 	});
 
@@ -75,13 +80,13 @@ describe('transports/file-transport', function () {
 		});
 
 		it('should write to stream with default type log', function () {
-			log({message: 'test'});
-			streamMethods.write.should.have.been.called.once;
+			log({message: 'test', type: 'info'});
+			streamMethods.write.should.have.been.calledWith('[undefined][info]: test').once;
 		});
 
 		it('should write to stream, if valid log type given', function () {
-			log({message: 'test', type: 'warn'});
-			streamMethods.write.should.have.been.called.once;
+			log({message: 'test1', type: 'warn'});
+			streamMethods.write.should.have.been.calledWith('[undefined][warn]: test1').once;
 		});
 	});
 });

@@ -9,11 +9,13 @@ var loggerDefaults = {
 	transports: [
 		{
 			transport: 'console',
+			format: '[%type%][%id%]: %message%',
 			types: ['debug', 'info', 'warn', 'error']
 		},
 		{
 			transport: 'file',
 			fileName: './test/logs/app.log',
+			format: '[%type%][%id%]: %message%',
 			types: ['debug', 'info', 'warn', 'error']
 		}
 	]
@@ -38,6 +40,10 @@ function StdLogger(config) {
 			item.transports = item.transports.map(configToTransports);
 		}
 
+		if (item.format) {
+			item.format = new ul.Formatters.TokenFormatter({format: item.format});
+		}
+
 		return {
 			transport: new Transport(item),
 			filters:   item.types ? [new ul.Filters.type(item)] : undefined
@@ -45,7 +51,6 @@ function StdLogger(config) {
 	}
 
 	var logger = new ul.Logger({
-		serialize:     ul.NodeSerializer,
 		loggerSession: ul.LoggerSession,
 		sessionLifeTime: config.sessionLifeTime,
 		onDestroy: config.onDestroy,
