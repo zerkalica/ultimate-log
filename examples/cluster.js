@@ -1,6 +1,6 @@
 var cluster   = require('cluster');
 var path      = require('path');
-var StdLogger = require('../loggers/std-logger');
+var StdLogger = require('../lib/assembled/std-logger');
 
 var logDir    = path.dirname(require.resolve('../index')) + '/logs';
 

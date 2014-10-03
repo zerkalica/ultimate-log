@@ -1,1 +1,3 @@
-module.exports = require('./lib/ul');
+module.exports = {
+	StdLogger: require('./lib/assembled/std-logger')
+};
