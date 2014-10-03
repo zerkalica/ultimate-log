@@ -1,6 +1,6 @@
 {
   "name": "ultimate-log",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Yet another logger with transports, cluster and logrotate support",
   "main": "index.js",
   "scripts": {
@@ -28,7 +28,6 @@
     "sinon-chai": "^2.5.0"
   },
   "dependencies": {
-    "logstream": "git+https://github.com/zerkalica/LogStream",
-    "micro-di": "^1.0.6"
+    "logstream": "git+https://github.com/zerkalica/LogStream"
   }
 }
