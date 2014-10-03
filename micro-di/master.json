@@ -51,12 +51,17 @@
 		}
 	],
 
-	"logger.master": {
+	"logger.core.master": {
 		"class": "UltimateLogger.Logger",
 		"options": {
-			"loggerSession": "@logger.session.default",
 			"sessionLifeTime": 10000,
 			"transports": "@logger.master.transports"
+		}
+	},
+	"logger.master": {
+		"class": "UltimateLogger.Facades.Simple",
+		"options": {
+			"logger": "@logger.core.master"
 		}
 	},
 

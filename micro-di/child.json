@@ -5,15 +5,20 @@
 			"rpcNamespace": "ultimate-logger"
 		}
 	},
-	"logger.child": {
+	"logger.core.child": {
 		"class": "UltimateLogger.Logger",
 		"options": {
-			"loggerSession": "@logger.session.default",
 			"transports": [
 				{
 					"transport": "@logger.transport.ipc"
 				}
 			]
 		}
-	}
+	},
+	"logger.child": {
+		"class": "UltimateLogger.Facades.Simple",
+		"options": {
+			"logger": "@logger.core.child"
+		}
+	}	
 }

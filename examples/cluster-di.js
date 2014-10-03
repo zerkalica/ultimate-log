@@ -17,7 +17,7 @@ var container = microDi.build();
 function master() {
 	var processBinder   = container.get('logger.process-binder');
 	var workerListeners = container.getByTag('logger.worker-listener');
-	var loggerFactory   = container.get('logger.master');
+	var logger          = container.get('logger.master');
 
 	processBinder.attach(loggerFactory);
 
@@ -29,28 +29,28 @@ function master() {
 		workerListener.attach(loggerFactory, cluster);
 	});
 
-	var logger = loggerFactory.sessionStart({namespace: 'master'});
+	logger.start({namespace: 'master'});
 
 	logger.log('master start');
 
 	for (var i = 0; i < workersCount; i++) {
 		cluster.fork();
 	}
-};
+}
 
 function child () {
 	var req = {test: 'test-req'};
 	var processBinder = container.get('logger.process-binder');
-	var loggerFactory = container.get('logger.child');
+	var logger = container.get('logger.child');
 
 	processBinder.attach(loggerFactory);
 
-	var logger = loggerFactory.sessionStart({data: req});
+	logger.start({data: req});
 	logger.log('test 1 from child');
 	logger.log('test 2 from child', 'error');
 	logger.stop();
 
-	logger = loggerFactory.sessionStart();
+	logger = logger.start();
 	logger.log('test 3 from child');
 
 	logger.session.data = req;

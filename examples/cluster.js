@@ -9,7 +9,7 @@ function master() {
 		log({message: 'on exit called', type: 'info', direct: false});
 	}
 
-	var logger = StdLogger({
+	var loggerFactory = StdLogger({
 		cluster: cluster,
 		reopenSignal: 'SUGHUP',
 		onDestroy: onDestroy,
@@ -29,7 +29,9 @@ function master() {
 				]
 			}
 		]
-	}).sessionStart();
+	});
+
+	var logger = StdLogger.simpleFacade(loggerFactory);
 
 	var workersCount = 2;
 	cluster.setupMaster({silent: true});
@@ -52,14 +54,14 @@ function child () {
 			}
 		]
 	});
+	var logger = StdLogger.simpleFacade(loggerFactory);
+	logger.start({session: req});
 
-
-	var logger = loggerFactory.sessionStart({session: req});
 	logger.log('test 1 from child');
 	logger.log('test 2 from child', 'error');
 	logger.stop();
 
-	logger = loggerFactory.sessionStart();
+	logger.stop({session: req});
 	logger.log('test 3 from child');
 
 	logger.setSessionData(req);
