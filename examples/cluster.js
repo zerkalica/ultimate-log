@@ -55,16 +55,16 @@ function child () {
 		]
 	});
 	var logger = StdLogger.simpleFacade(loggerFactory);
-	logger.start({session: req});
+	logger.start({req: req});
 
 	logger.log('test 1 from child');
 	logger.log('test 2 from child', 'error');
 	logger.stop();
 
-	logger.stop({session: req});
+	logger.stop({req: req});
 	logger.log('test 3 from child');
 
-	logger.setSessionData(req);
+	logger.setData({req: req});
 
 	setTimeout(function () {
 		logger.log('test 4 from child', 'error');
