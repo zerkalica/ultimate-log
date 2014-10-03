@@ -1,4 +1,5 @@
 var ul = require('../lib/ul');
+var pathway = require('./pathway');
 
 var loggerDefaults = {
 	sessionLifeTime: 10000,
@@ -9,12 +10,14 @@ var loggerDefaults = {
 	transports: [
 		{
 			transport: 'console',
+			formatter: 'TokenFormatter',
 			format: '[%type%][%id%]: %message%',
 			types: ['debug', 'info', 'warn', 'error']
 		},
 		{
 			transport: 'file',
 			fileName: './test/logs/app.log',
+			formatter: 'TokenFormatter',
 			format: '[%type%][%id%]: %message%',
 			types: ['debug', 'info', 'warn', 'error']
 		}
@@ -41,7 +44,8 @@ function StdLogger(config) {
 		}
 
 		if (item.format) {
-			item.format = new ul.Formatters.TokenFormatter({format: item.format});
+			var Formatter = pathway(ul.Formatters, item.formatter) || ul.Formatters.TokenFormatter;
+			item.format = new Formatter({format: item.format});
 		}
 
 		return {
