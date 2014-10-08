@@ -1,3 +1,4 @@
-module.exports = {
-	StdLogger: require('./lib/assembled/std-logger')
-};
+var ul = require('./lib/ul');
+ul.StdLogger = require('./lib/assembled/std-logger');
+
+module.exports = ul;
