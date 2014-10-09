@@ -28,8 +28,8 @@
     "sinon-chai": "^2.5.0"
   },
   "dependencies": {
-    "json-stringify-safe": "^5.0.0",
     "logstream": "git+https://github.com/zerkalica/LogStream",
-    "moment": "^2.8.3"
+    "moment": "^2.8.3",
+    "traverse": "^0.6.6"
   }
 }
