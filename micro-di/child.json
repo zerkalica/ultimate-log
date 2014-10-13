@@ -1,24 +1,20 @@
 {
-	"logger.transport.ipc": {
-		"class": "UltimateLogger.Transports.ipc",
-		"options": {
-			"rpcNamespace": "ultimate-logger"
-		}
-	},
-	"logger.core.child": {
-		"class": "UltimateLogger.Logger",
-		"options": {
-			"transports": [
-				{
-					"transport": "@logger.transport.ipc"
+	"ul": {
+		"logger": {
+			"child": {
+				"@class": "UltimateLogger.Facades.Simple",
+				"logger": {
+					"@class": "UltimateLogger.Logger",
+					"transports": [
+						{
+							"transport": {
+								"@class": "UltimateLogger.Transports.ipc",
+								"rpcNamespace": "ultimate-logger"
+							}
+						}
+					]
 				}
-			]
+			}
 		}
-	},
-	"logger.child": {
-		"class": "UltimateLogger.Facades.Simple",
-		"options": {
-			"logger": "@logger.core.child"
-		}
-	}	
+	}
 }

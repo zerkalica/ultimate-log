@@ -1,84 +1,36 @@
 {
-	"logger.transport.console": {
-		"class": "UltimateLogger.Transports.console",
-		"options": {}
-	},
-	"logger.transport.file.all": {
-		"class": "UltimateLogger.Transports.file",
-		"options": {
-			"fileName": "%log.dir%/all.log",
-			"formatter": "@logger.formatter.token-formatter"
-		}
-	},
-	"logger.transport.file.error": {
-		"class": "UltimateLogger.Transports.file",
-		"options": {
-			"fileName": "%log.dir%/error.log",
-			"formatter": "@logger.formatter.token-formatter"
-		}
-	},
-	"logger.filter.type.all": {
-		"class": "UltimateLogger.Filters.type",
-		"options": {
-			"types": ["debug", "info", "warn", "error"]
-		}
-	},
-	"logger.filter.type.error": {
-		"class": "UltimateLogger.Filters.type",
-		"options": {
-			"types": ["error"]
-		}
-	},
-
-	"logger.master.transports.aggregator": {
-		"class": "UltimateLogger.Transports.aggregator",
-		"options": {
-			"transports": [
-				{
-					"transport": "@logger.transport.console",
-					"filters": ["@logger.filter.type.all"]
-				},
-				{
-					"transport": "@logger.transport.file.all",
-					"filters": ["@logger.filter.type.all"]
+	"ul": {
+		"process-binder": {
+			"@class": "UltimateLogger.ProcessBinder",
+			"reopenSignal": "SIGHUP"
+		},
+		"listeners": [
+			{
+				"@class": "UltimateLogger.Listeners.std"
+			},
+			{
+				"@class": "UltimateLogger.Listeners.ipc",
+				"rpcNamespace": "ultimate-logger"
+			}
+		],
+		"logger": {
+			"master": {
+				"@class": "UltimateLogger.Facades.Simple",
+				"processBinder": "@ul.process-binder",
+				"listeners": "@ul.listeners",
+				"logger": {
+					"@class": "UltimateLogger.Logger",
+					"transports": [
+						{
+							"transport": {
+								"@class": "UltimateLogger.Transports.console",
+								"formatter": "@ul.formatter.std"
+							},
+							"filters": ["@ul.filter.warn"]
+						}
+					]
 				}
-			]
-		}
-	},
-	"logger.master.transports": [
-		{
-			"transport": "@logger.master.transports.aggregator"
-		}
-	],
-
-	"logger.core.master": {
-		"class": "UltimateLogger.Logger",
-		"options": {
-			"sessionLifeTime": 10000,
-			"transports": "@logger.master.transports"
-		}
-	},
-	"logger.master": {
-		"class": "UltimateLogger.Facades.Simple",
-		"options": {
-			"logger": "@logger.core.master"
-		}
-	},
-
-	"logger.master.ipc-worker-listener": {
-		"class": "UltimateLogger.Listeners.ipc",
-		"tag": "logger.worker-listener",
-		"options": {
-			"rpcNamespace": "ultimate-logger",
-			"logger": "@logger.master"
-		}
-	},
-
-	"logger.master.std-worker-listener": {
-		"class": "UltimateLogger.Listeners.std",
-		"tag": "logger.worker-listener",
-		"options": {
-			"logger": "@logger.master"
+			}
 		}
 	}
 }

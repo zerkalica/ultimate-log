@@ -1,19 +1,20 @@
 {
-	"logger.session.default": {
-		"class": "UltimateLogger.LoggerSession"
-	},
-
-	"logger.formatter.token-formatter": {
-		"class": "UltimateLogger.Formatters.TokenFormatter",
-		"options": {
-			"format": "[%type%][%id%]: %message%"
-		}
-	},
-
-	"logger.process-binder": {
-		"class": "UltimateLogger.ProcessBinder",
-		"options": {
-			"reopenSignal": "SIGHUP"
+	"ul": {
+		"filter": {
+			"warn": {
+				"@class": "UltimateLogger.Filters.type",
+				"types": ["error", "warn"]
+			},
+			"debug": {
+				"@class": "UltimateLogger.Filters.type",
+				"types": ["info", "debug"]
+			}
+		},
+		"formatter": {
+			"std": {
+				"@class": "UltimateLogger.Formatters.TokenFormatter",
+				"format": "[%type%][%id%]: %message%"
+			}
 		}
 	}
 }

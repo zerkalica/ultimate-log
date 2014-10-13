@@ -28,10 +28,11 @@
     "sinon-chai": "^2.5.0"
   },
   "dependencies": {
-    "circular-serializer": "^0.0.3",
+    "circular-serializer": "^0.0.5",
     "logstream": "git+https://github.com/zerkalica/LogStream",
+    "micro-di": "^1.0.7",
     "moment": "^2.8.3",
-    "regexp-string-mapper": "^0.0.2",
+    "regexp-string-mapper": "^0.0.3",
     "traverse": "^0.6.6"
   }
 }

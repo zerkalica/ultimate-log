@@ -3,62 +3,35 @@ var cluster   = require('cluster');
 var path      = require('path');
 var loggerRegister  = require('../micro-di');
 
-var microDi = new MicroDi();
+var microDi = MicroDi();
 
 microDi.addVariables({
 	'project.rootdir': path.dirname(require.resolve('../index'))
 });
 
-loggerRegister(microDi, !cluster.isMaster);
+loggerRegister(microDi);
 
-var container = microDi.build();
-
+var get = microDi.build();
 
 function master() {
-	var processBinder   = container.get('logger.process-binder');
-	var workerListeners = container.getByTag('logger.worker-listener');
-	var logger          = container.get('logger.master');
+	function onDestroy(log) {
+		log({message: 'on exit called', type: 'info', direct: false});
+	}
+	var logger = get('ul.logger.master');
+	//logger.init({onDestroy: onDestroy});
 
-	processBinder.attach(loggerFactory);
-
-	var id = process.pid + '-master';
 	var workersCount = 2;
-
 	cluster.setupMaster({silent: true});
-	workerListeners.forEach(function (workerListener) {
-		workerListener.attach(loggerFactory, cluster);
-	});
-
-	logger.start({namespace: 'master'});
-
-	logger.log('master start');
+	logger.start();
+	logger.log('master start1');
+	logger.log('master start2');
 
 	for (var i = 0; i < workersCount; i++) {
 		cluster.fork();
 	}
 }
 
-function child () {
-	var req = {test: 'test-req'};
-	var processBinder = container.get('logger.process-binder');
-	var logger = container.get('logger.child');
-
-	processBinder.attach(loggerFactory);
-
-	logger.start({data: req});
-	logger.log('test 1 from child');
-	logger.log('test 2 from child', 'error');
-	logger.stop();
-
-	logger = logger.start();
-	logger.log('test 3 from child');
-
-	logger.session.data = req;
-
-	setTimeout(function () {
-		logger.log('test 4 from child', 'error');
-		logger.stop();
-	}, 100);
+function child() {
 
 }
 
