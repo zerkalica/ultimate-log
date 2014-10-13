@@ -43,19 +43,34 @@
 				"@class": "UltimateLogger.Logger",
 				"transports": {
 					"ipc": {
-						"transport": {
-							"@class": "UltimateLogger.Transports.ipc",
-							"rpcNamespace": "ultimate-logger",
-							"fallbackTransports": [
-								{
-									"transport": {
-										"@class": "UltimateLogger.Transports.console"
-									}
-								}
-							]
-						}
+						"@class": "UltimateLogger.Transports.ipc",
+						"rpcNamespace": "ultimate-logger",
+						"fallbackTransports": [
+							{
+								"@class": "UltimateLogger.Transports.console"
+							}
+						]
 					}
 				}
+			}
+		},
+
+		"transports": {
+			"console": {
+				"@class": "UltimateLogger.Transports.console",
+				"formatter": "@ul.formatter.console"
+			},
+			"file-error": {
+				"@class": "UltimateLogger.Transports.file",
+				"formatter": "@ul.formatter.file",
+				"fileName": "@ul.errorLog",
+				"filter": "@ul.filter.warn"
+			},
+			"file-debug": {
+				"@class": "UltimateLogger.Transports.file",
+				"formatter": "@ul.formatter.file",
+				"fileName": "@ul.debugLog",
+				"filter": "@ul.filter.debug"
 			}
 		},
 
@@ -67,33 +82,8 @@
 				"@class": "UltimateLogger.Logger",
 				"transports": {
 					"aggregator": {
-						"transport": {
-							"@class": "UltimateLogger.Transports.aggregator",
-							"transports": {
-								"console": {
-									"transport": {
-										"@class": "UltimateLogger.Transports.console",
-										"formatter": "@ul.formatter.console"
-									}
-								},
-								"file-error": {
-									"transport": {
-										"@class": "UltimateLogger.Transports.file",
-										"formatter": "@ul.formatter.file",
-										"fileName": "@ul.errorLog"
-									},
-									"filters": ["@ul.filter.warn"]
-								},
-								"file-debug": {
-									"transport": {
-										"@class": "UltimateLogger.Transports.file",
-										"formatter": "@ul.formatter.file",
-										"fileName": "@ul.debugLog"
-									},
-									"filters": ["@ul.filter.debug"]
-								}
-							}
-						}
+						"@class": "UltimateLogger.Transports.aggregator",
+						"transports": "@ul.transports"
 					}
 				}
 			}
