@@ -1,12 +1,12 @@
-var StdLogger   = require('../').StdLogger;
-var cluster   = require('cluster');
-var path      = require('path');
+var StdLogger = require('../').di;
+var cluster = require('cluster');
+var path = require('path');
 
 function onDestroy(log) {
 	log({message: 'on exit called', type: 'info', direct: false});
 }
 
-var container = StdLogger
+var container = StdLogger()
 	.addConfig({
 		'ul': {
 			'logDir': path.dirname(require.resolve('../index')) + '/logs',
@@ -14,6 +14,15 @@ var container = StdLogger
 				"logger": {
 					"onDestroy": {
 						"@static": "Example1.UltimateLogger.onDestroy"
+					},
+					"transports": {
+						"aggregator": {
+							"transport": {
+								"transports": {
+									"file-error": "@disable"
+								}
+							}
+						}
 					}
 				}
 			}

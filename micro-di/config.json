@@ -41,8 +41,8 @@
 			"@class": "UltimateLogger.Facades.Simple",
 			"logger": {
 				"@class": "UltimateLogger.Logger",
-				"transports": [
-					{
+				"transports": {
+					"ipc": {
 						"transport": {
 							"@class": "UltimateLogger.Transports.ipc",
 							"rpcNamespace": "ultimate-logger",
@@ -55,7 +55,7 @@
 							]
 						}
 					}
-				]
+				}
 			}
 		},
 
@@ -65,18 +65,18 @@
 			"listeners": "@ul.listeners",
 			"logger": {
 				"@class": "UltimateLogger.Logger",
-				"transports": [
-					{
+				"transports": {
+					"aggregator": {
 						"transport": {
 							"@class": "UltimateLogger.Transports.aggregator",
-							"transports": [
-								{
+							"transports": {
+								"console": {
 									"transport": {
 										"@class": "UltimateLogger.Transports.console",
 										"formatter": "@ul.formatter.console"
 									}
 								},
-								{
+								"file-error": {
 									"transport": {
 										"@class": "UltimateLogger.Transports.file",
 										"formatter": "@ul.formatter.file",
@@ -84,7 +84,7 @@
 									},
 									"filters": ["@ul.filter.warn"]
 								},
-								{
+								"file-debug": {
 									"transport": {
 										"@class": "UltimateLogger.Transports.file",
 										"formatter": "@ul.formatter.file",
@@ -92,10 +92,10 @@
 									},
 									"filters": ["@ul.filter.debug"]
 								}
-							]
+							}
 						}
 					}
-				]
+				}
 			}
 		}
 	}

@@ -1,4 +1,14 @@
-var ul = require('./lib/ul');
-ul.StdLogger = require('./micro-di/std-logger');
+var register = require('./micro-di');
+var MicroDi = require('micro-di');
 
-module.exports = ul;
+function di() {
+	var microDi = MicroDi();
+	register(microDi);
+
+	return microDi;
+}
+
+module.exports = {
+	register: register,
+	di: di
+};
