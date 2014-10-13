@@ -73,20 +73,21 @@
 				"filter": "@ul.filter.debug"
 			}
 		},
+		"logger": {
+			"@class": "UltimateLogger.Logger",
+			"transports": {
+				"aggregator": {
+					"@class": "UltimateLogger.Transports.aggregator",
+					"transports": "@ul.transports"
+				}
+			}
+		},
 
 		"master": {
 			"@class": "UltimateLogger.Facades.Simple",
 			"processBinder": "@ul.process-binder",
 			"listeners": "@ul.listeners",
-			"logger": {
-				"@class": "UltimateLogger.Logger",
-				"transports": {
-					"aggregator": {
-						"@class": "UltimateLogger.Transports.aggregator",
-						"transports": "@ul.transports"
-					}
-				}
-			}
+			"logger": "@ul.logger"
 		}
 	}
 }

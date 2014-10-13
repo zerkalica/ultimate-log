@@ -13,11 +13,9 @@ var container = StdLogger()
 			'transports': {
 				"file-error": "@disable"
 			},
-			"master": {
-				"logger": {
-					"onDestroy": {
-						"@static": "Example1.UltimateLogger.onDestroy"
-					}
+			"logger": {
+				"onDestroy": {
+					"@static": "Example1.UltimateLogger.onDestroy"
 				}
 			}
 		}
