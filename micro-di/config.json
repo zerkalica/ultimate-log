@@ -3,9 +3,10 @@
 		"logDir": "",
 		"errorLog": "@ul.logDir@/error.log",
 		"debugLog": "@ul.logDir@/debug.log",
+		"reopenSignal": "SIGHUP",
 		"process-binder": {
 			"@class": "UltimateLogger.ProcessBinder",
-			"reopenSignal": "SIGHUP"
+			"reopenSignal": "@ul.reopenSignal"
 		},
 		"listeners": [
 			{
@@ -75,6 +76,8 @@
 		},
 		"logger": {
 			"@class": "UltimateLogger.Logger",
+			"processBinder": "@ul.process-binder",
+			"listeners": "@ul.listeners",
 			"transports": {
 				"aggregator": {
 					"@class": "UltimateLogger.Transports.aggregator",
@@ -85,8 +88,6 @@
 
 		"master": {
 			"@class": "UltimateLogger.Facades.Simple",
-			"processBinder": "@ul.process-binder",
-			"listeners": "@ul.listeners",
 			"logger": "@ul.logger"
 		}
 	}
