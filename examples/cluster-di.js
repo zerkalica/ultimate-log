@@ -13,7 +13,7 @@ var container = StdLogger()
 			'transports': {
 				"file-error": "@disable"
 			},
-			"logger": {
+			"master": {
 				"onDestroy": {
 					"@static": "Example1.UltimateLogger.onDestroy"
 				}
@@ -30,7 +30,7 @@ var container = StdLogger()
 	.build();
 
 function master() {
-	var logger = container('ul.master');
+	var logger = container('ul.facade.master');
 	logger.init();
 
 	var workersCount = 2;
@@ -46,7 +46,7 @@ function master() {
 
 function child() {
 	var req = {test: 'test-req'};
-	var logger = container('ul.child');
+	var logger = container('ul.facade.child');
 	logger.init();
 	logger.start({req: req});
 

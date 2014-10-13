@@ -40,25 +40,33 @@
 				"types": "@ul.debugLevels"
 			}
 		},
+		"facade": {
+			"child": {
+				"@class": "UltimateLogger.Facades.Simple",
+				"logger": "@ul.child"
+			},
+			"master": {
+				"@class": "UltimateLogger.Facades.Simple",
+				"logger": "@ul.master"
+			}
+		},
+
 		"child": {
-			"@class": "UltimateLogger.Facades.Simple",
-			"logger": {
-				"@class": "UltimateLogger.Logger",
-				"transports": {
-					"ipc": {
-						"@class": "UltimateLogger.Transports.ipc",
-						"rpcNamespace": "ultimate-logger",
-						"fallbackTransports": [
-							{
-								"@class": "UltimateLogger.Transports.console"
-							}
-						]
-					}
+			"@class": "UltimateLogger.Logger",
+			"transports": {
+				"ipc": {
+					"@class": "UltimateLogger.Transports.ipc",
+					"rpcNamespace": "ultimate-logger",
+					"fallbackTransports": [
+						{
+							"@class": "UltimateLogger.Transports.console"
+						}
+					]
 				}
 			}
 		},
 
-		"logger": {
+		"master": {
 			"@class": "UltimateLogger.Logger",
 			"processBinder": "@ul.process-binder",
 			"listeners": "@ul.listeners",
@@ -85,11 +93,6 @@
 					}
 				}
 			}
-		},
-
-		"master": {
-			"@class": "UltimateLogger.Facades.Simple",
-			"logger": "@ul.logger"
 		}
 	}
 }
