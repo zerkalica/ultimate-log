@@ -1,24 +1,36 @@
-var MicroDi   = require('micro-di');
+var StdLogger   = require('../').StdLogger;
 var cluster   = require('cluster');
 var path      = require('path');
-var loggerRegister  = require('../micro-di');
 
-var microDi = MicroDi();
+function onDestroy(log) {
+	log({message: 'on exit called', type: 'info', direct: false});
+}
 
-microDi.addVariables({
-	'project.rootdir': path.dirname(require.resolve('../index'))
-});
-
-loggerRegister(microDi);
-
-var get = microDi.build();
+var container = StdLogger
+	.addConfig({
+		'ul': {
+			'logDir': path.dirname(require.resolve('../index')) + '/logs',
+			"master": {
+				"logger": {
+					"onDestroy": {
+						"@static": "Example1.UltimateLogger.onDestroy"
+					}
+				}
+			}
+		}
+	})
+	.addModules({
+		Example1: {
+			UltimateLogger: {
+				onDestroy: onDestroy
+			}
+		}
+	})
+	.build();
 
 function master() {
-	function onDestroy(log) {
-		log({message: 'on exit called', type: 'info', direct: false});
-	}
-	var logger = get('ul.logger.master');
-	//logger.init({onDestroy: onDestroy});
+	var logger = container('ul.master');
+	logger.init();
 
 	var workersCount = 2;
 	cluster.setupMaster({silent: true});
@@ -32,7 +44,24 @@ function master() {
 }
 
 function child() {
+	var req = {test: 'test-req'};
+	var logger = container('ul.child');
+	logger.init();
+	logger.start({req: req});
 
+	logger.log('test 1 from child');
+	logger.log('test 2 from child', 'error');
+	logger.stop();
+
+	logger.stop({req: req});
+	logger.log('test 3 from child');
+
+	logger.setData({req: req});
+
+	setTimeout(function () {
+		logger.log('test 4 from child', 'error');
+		logger.stop();
+	}, 100);
 }
 
 if (cluster.isMaster) {

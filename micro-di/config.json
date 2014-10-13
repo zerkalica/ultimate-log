@@ -1,0 +1,102 @@
+{
+	"ul": {
+		"logDir": "",
+		"errorLog": "@ul.logDir@/error.log",
+		"debugLog": "@ul.logDir@/debug.log",
+		"process-binder": {
+			"@class": "UltimateLogger.ProcessBinder",
+			"reopenSignal": "SIGHUP"
+		},
+		"listeners": [
+			{
+				"@class": "UltimateLogger.Listeners.std"
+			},
+			{
+				"@class": "UltimateLogger.Listeners.ipc",
+				"rpcNamespace": "ultimate-logger"
+			}
+		],
+		"formatter": {
+			"console": {
+				"@class": "UltimateLogger.Formatters.TokenFormatter",
+				"format": "[%type%][%id%]: %message%"
+			},
+
+			"file": {
+				"@class": "UltimateLogger.Formatters.TokenFormatter",
+				"format": "[%type%][%id%]: %message%"
+			}
+		},
+		"filter": {
+			"warn": {
+				"@class": "UltimateLogger.Filters.type",
+				"types": ["error", "warn"]
+			},
+			"debug": {
+				"@class": "UltimateLogger.Filters.type",
+				"types": ["info", "debug"]
+			}
+		},
+		"child": {
+			"@class": "UltimateLogger.Facades.Simple",
+			"logger": {
+				"@class": "UltimateLogger.Logger",
+				"transports": [
+					{
+						"transport": {
+							"@class": "UltimateLogger.Transports.ipc",
+							"rpcNamespace": "ultimate-logger",
+							"fallbackTransports": [
+								{
+									"transport": {
+										"@class": "UltimateLogger.Transports.console"
+									}
+								}
+							]
+						}
+					}
+				]
+			}
+		},
+
+		"master": {
+			"@class": "UltimateLogger.Facades.Simple",
+			"processBinder": "@ul.process-binder",
+			"listeners": "@ul.listeners",
+			"logger": {
+				"@class": "UltimateLogger.Logger",
+				"transports": [
+					{
+						"transport": {
+							"@class": "UltimateLogger.Transports.aggregator",
+							"transports": [
+								{
+									"transport": {
+										"@class": "UltimateLogger.Transports.console",
+										"formatter": "@ul.formatter.console"
+									}
+								},
+								{
+									"transport": {
+										"@class": "UltimateLogger.Transports.file",
+										"formatter": "@ul.formatter.file",
+										"fileName": "@ul.errorLog"
+									},
+									"filters": ["@ul.filter.warn"]
+								},
+								{
+									"transport": {
+										"@class": "UltimateLogger.Transports.file",
+										"formatter": "@ul.formatter.file",
+										"fileName": "@ul.debugLog"
+									},
+									"filters": ["@ul.filter.debug"]
+								}
+							]
+						}
+					}
+				]
+			}
+		}
+	}
+}

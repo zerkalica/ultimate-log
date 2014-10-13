@@ -1,10 +1,10 @@
 {
   "name": "ultimate-log",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Yet another logger with transports, cluster and logrotate support",
   "main": "index.js",
   "scripts": {
-    "start": "node examples/cluster",
+    "start": "node examples/cluster-di",
     "test": "node_modules/.bin/mocha --recursive tests"
   },
   "repository": {
@@ -30,7 +30,7 @@
   "dependencies": {
     "circular-serializer": "^0.0.5",
     "logstream": "git+https://github.com/zerkalica/LogStream",
-    "micro-di": "^1.0.7",
+    "micro-di": "^1.0.9",
     "moment": "^2.8.3",
     "regexp-string-mapper": "^0.0.3",
     "traverse": "^0.6.6"
