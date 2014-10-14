@@ -8,14 +8,18 @@ function onDestroy(log) {
 
 var container = StdLogger()
 	.addConfig({
-		'ul': {
-			'logDir': path.dirname(require.resolve('../index')) + '/logs',
-			'transports': {
-				"file-error": "@disable"
-			},
+		'ultimateLogger': {
+			'logsDir': path.dirname(require.resolve('../index')) + '/logs',
 			"master": {
 				"onDestroy": {
 					"@static": "Example1.UltimateLogger.onDestroy"
+				},
+				"transports": {
+					"aggregator": {
+						"transports": {
+							"fileApp": "@disable"
+						}
+					}
 				}
 			}
 		}
@@ -30,7 +34,7 @@ var container = StdLogger()
 	.build();
 
 function master() {
-	var logger = container('ul.facade.master');
+	var logger = container('ultimateLogger.facade.master');
 	logger.init();
 
 	var workersCount = 2;
@@ -46,7 +50,7 @@ function master() {
 
 function child() {
 	var req = {test: 'test-req'};
-	var logger = container('ul.facade.child');
+	var logger = container('ultimateLogger.facade.child');
 	logger.init();
 	logger.start({req: req});
 

@@ -1,6 +1,6 @@
 {
   "name": "ultimate-log",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "Yet another logger with transports, cluster and logrotate support",
   "main": "index.js",
   "scripts": {

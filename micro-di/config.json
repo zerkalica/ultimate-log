@@ -1,15 +1,14 @@
 {
-	"ul": {
+	"ultimateLogger": {
 		"logsDir": "",
-		"errorLog": "@ul.logsDir@/error.log",
-		"debugLog": "@ul.logsDir@/debug.log",
+		"appLog": "@ultimateLogger.logsDir@/app.log",
 		"reopenSignal": "SIGHUP",
 		"process-binder": {
 			"@class": "UltimateLogger.ProcessBinder",
-			"reopenSignal": "@ul.reopenSignal"
+			"reopenSignal": "@ultimateLogger.reopenSignal"
 		},
-		"errorLevels": ["error", "warn"],
-		"debugLevels": ["info", "debug"],
+		"appLevels": ["debug", "info", "error", "warn"],
+		"messageTemplate": "[%type%][%id%]: %message%",
 		"listeners": [
 			{
 				"@class": "UltimateLogger.Listeners.std"
@@ -22,32 +21,22 @@
 		"formatter": {
 			"console": {
 				"@class": "UltimateLogger.Formatters.TokenFormatter",
-				"format": "[%type%][%id%]: %message%"
+				"format": "@ultimateLogger.messageTemplate"
 			},
 
 			"file": {
 				"@class": "UltimateLogger.Formatters.TokenFormatter",
-				"format": "[%type%][%id%]: %message%"
-			}
-		},
-		"filter": {
-			"warn": {
-				"@class": "UltimateLogger.Filters.type",
-				"types": "@ul.errorLevels"
-			},
-			"debug": {
-				"@class": "UltimateLogger.Filters.type",
-				"types": "@ul.debugLevels"
+				"format": "@ultimateLogger.messageTemplate"
 			}
 		},
 		"facade": {
 			"child": {
 				"@class": "UltimateLogger.Facades.Simple",
-				"logger": "@ul.child"
+				"logger": "@ultimateLogger.child"
 			},
 			"master": {
 				"@class": "UltimateLogger.Facades.Simple",
-				"logger": "@ul.master"
+				"logger": "@ultimateLogger.master"
 			}
 		},
 
@@ -68,27 +57,28 @@
 
 		"master": {
 			"@class": "UltimateLogger.Logger",
-			"processBinder": "@ul.process-binder",
-			"listeners": "@ul.listeners",
+			"processBinder": "@ultimateLogger.process-binder",
+			"listeners": "@ultimateLogger.listeners",
 			"transports": {
 				"aggregator": {
 					"@class": "UltimateLogger.Transports.aggregator",
 					"transports": {
 						"console": {
 							"@class": "UltimateLogger.Transports.console",
-							"formatter": "@ul.formatter.console"
+							"formatter": "@ultimateLogger.formatter.console",
+							"filter": {
+								"@class": "UltimateLogger.Filters.type",
+								"types": "@ultimateLogger.appLevels"
+							}
 						},
-						"file-error": {
+						"fileApp": {
 							"@class": "UltimateLogger.Transports.file",
-							"formatter": "@ul.formatter.file",
-							"fileName": "@ul.errorLog",
-							"filter": "@ul.filter.warn"
-						},
-						"file-debug": {
-							"@class": "UltimateLogger.Transports.file",
-							"formatter": "@ul.formatter.file",
-							"fileName": "@ul.debugLog",
-							"filter": "@ul.filter.debug"
+							"formatter": "@ultimateLogger.formatter.file",
+							"fileName": "@ultimateLogger.appLog",
+							"filter": {
+								"@class": "UltimateLogger.Filters.type",
+								"types": "@ultimateLogger.appLevels"
+							}
 						}
 					}
 				}
