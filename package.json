@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "circular-serializer": "^0.0.5",
-    "writable-file-stream": "^1.0.1",
+    "writable-file-stream": "^1.0.2",
     "micro-di": "^1.0.12",
     "moment": "^2.8.3",
     "regexp-string-mapper": "^0.0.3",
