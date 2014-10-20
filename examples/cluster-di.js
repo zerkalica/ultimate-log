@@ -10,16 +10,12 @@ var container = StdLogger()
 	.addConfig({
 		'ultimateLogger': {
 			'logsDir': path.dirname(require.resolve('../index')) + '/logs',
+			"aggregatedTransports": {
+				"fileApp": "@disable"
+			},
 			"master": {
 				"onDestroy": {
 					"@static": "Example1.UltimateLogger.onDestroy"
-				},
-				"transports": {
-					"aggregator": {
-						"transports": {
-							"fileApp": "@disable"
-						}
-					}
 				}
 			}
 		}

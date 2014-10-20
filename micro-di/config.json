@@ -2,6 +2,7 @@
 	"ultimateLogger": {
 		"logsDir": "",
 		"appLog": "@ultimateLogger.logsDir@/app.log",
+		"bufferSize": 1024,
 		"reopenSignal": "SIGHUP",
 		"process-binder": {
 			"@class": "UltimateLogger.ProcessBinder",
@@ -55,35 +56,38 @@
 			}
 		},
 
+		"aggregatedTransports": {
+			"console": {
+				"@class": "UltimateLogger.Transports.console",
+				"formatter": "@ultimateLogger.formatter.console",
+				"filter": {
+					"@class": "UltimateLogger.Filters.type",
+					"types": "@ultimateLogger.appLevels"
+				}
+			},
+			"fileApp": {
+				"@class": "UltimateLogger.Transports.file",
+				"formatter": "@ultimateLogger.formatter.file",
+				"fileName": "@ultimateLogger.appLog",
+				"bufferSize": "@ultimateLogger.bufferSize",
+				"filter": {
+					"@class": "UltimateLogger.Filters.type",
+					"types": "@ultimateLogger.appLevels"
+				}
+			}
+		},
+		"transports": {
+			"aggregator": {
+				"@class": "UltimateLogger.Transports.aggregator",
+				"transports": "@ultimateLogger.aggregatedTransports"
+			}
+		},
+
 		"master": {
 			"@class": "UltimateLogger.Logger",
 			"processBinder": "@ultimateLogger.process-binder",
 			"listeners": "@ultimateLogger.listeners",
-			"transports": {
-				"aggregator": {
-					"@class": "UltimateLogger.Transports.aggregator",
-					"transports": {
-						"console": {
-							"@class": "UltimateLogger.Transports.console",
-							"formatter": "@ultimateLogger.formatter.console",
-							"filter": {
-								"@class": "UltimateLogger.Filters.type",
-								"types": "@ultimateLogger.appLevels"
-							}
-						},
-						"fileApp": {
-							"@class": "UltimateLogger.Transports.file",
-							"formatter": "@ultimateLogger.formatter.file",
-							"fileName": "@ultimateLogger.appLog",
-							"bufferSize": 1024,
-							"filter": {
-								"@class": "UltimateLogger.Filters.type",
-								"types": "@ultimateLogger.appLevels"
-							}
-						}
-					}
-				}
-			}
+			"transports": "@ultimateLogger.transports"
 		}
 	}
 }
