@@ -31,10 +31,11 @@ var container = StdLogger()
 			}
 		}
 	})
-	.build();
+	.build()
+	.getContainer();
 
 function master() {
-	var logger = container('ultimateLogger.facade.master');
+	var logger = container.get('ultimateLogger.facade.master');
 	logger.init();
 
 	var workersCount = 2;
@@ -50,7 +51,7 @@ function master() {
 
 function child() {
 	var req = {test: 'test-req'};
-	var logger = container('ultimateLogger.facade.child');
+	var logger = container.get('ultimateLogger.facade.child');
 	logger.init();
 	logger.start({req: req});
 
