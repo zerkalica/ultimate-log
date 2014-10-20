@@ -31,7 +31,6 @@ var container = StdLogger()
 			}
 		}
 	})
-	.build()
 	.getContainer();
 
 function master() {
