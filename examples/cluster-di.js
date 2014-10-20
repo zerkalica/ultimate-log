@@ -10,8 +10,9 @@ var container = StdLogger()
 	.addConfig({
 		'ultimateLogger': {
 			'logsDir': path.dirname(require.resolve('../index')) + '/logs',
+			"bufferSize": 10000,
 			"aggregatedTransports": {
-				"fileApp": "@disable"
+				//"fileApp": "@disable"
 			},
 			"master": {
 				"onDestroy": {

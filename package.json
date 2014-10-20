@@ -1,6 +1,6 @@
 {
   "name": "ultimate-log",
-  "version": "1.0.30",
+  "version": "1.0.31",
   "description": "Yet another logger with transports, cluster and logrotate support",
   "main": "index.js",
   "scripts": {
@@ -15,8 +15,8 @@
     "logger",
     "logrotate"
   ],
-  "author": "Sergey Yuferev <nexor@ya.ru>",
-  "license": "ISC",
+  "author": "Stefan Zerkalica <zerkalica@gmail.com>",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/zerkalica/ultimate-log/issues"
   },
@@ -30,7 +30,7 @@
   "dependencies": {
     "circular-serializer": "^0.0.5",
     "writable-file-stream": "^1.0.2",
-    "micro-di": "^1.0.17",
+    "micro-di": "^1.0.19",
     "moment": "^2.8.3",
     "regexp-string-mapper": "^0.0.3",
     "traverse": "^0.6.6"
