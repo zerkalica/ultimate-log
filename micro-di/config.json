@@ -2,7 +2,7 @@
 	"ultimateLogger": {
 		"logsDir": "",
 		"appLog": "@ultimateLogger.logsDir@/app.log",
-		"bufferSize": 1024,
+		"bufferSize": 0,
 		"reopenSignal": "SIGHUP",
 		"process-binder": {
 			"@class": "UltimateLogger.ProcessBinder",
